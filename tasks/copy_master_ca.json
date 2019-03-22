@@ -1,0 +1,13 @@
+{
+  "description": "Backup ssldir and move new CA cert",
+  "parameters": {
+    "new_cert": {
+      "description": "Location of the newly generated CA cert",
+      "type": "String"
+    }
+  },
+
+  "implementations": [
+    {"name": "copy_master_ca.sh", "requirements": ["shell"], "files": ["ca_regen/files/common.sh", "ca_regen/files/regen.sh"], "input_method": "environment"}
+  ]
+}
