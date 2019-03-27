@@ -1,14 +1,23 @@
 plan ca_regen::upload_ca_cert(TargetSpec $agents, String $cert) {
-  $agents.apply_prep
-  #TODO: filter *nix and windows nodes. Break into separate task for manual upload?
+  # Work around BOLT-1168
+  run_plan('ca_regen::get_agent_facts', 'agents' => $agents, '_catch_errors' => true)
   $tmp = run_plan('facts', 'nodes' => $agents, '_catch_errors' => true)
 
-  # Is there a better way to do success and failure?
-  $ok = $tmp.filter |$n| { $n.ok }
-  $not_ok = $tmp.filter |$n| { ! $n.ok }
+  # Extract the ResultSet from an error object
+  case $tmp {
+    Error['bolt/run-failure']: {
+      $results = $tmp.details['result_set']
+      $not_ok = $results.error_set
+    }
+    default: {
+      $results = $tmp
+      $not_ok = undef
+    }
+  }
 
-  $windows_targets = $ok.filter |$n| { $n.value['os']['family'] == "windows" }
-  $linux_targets = $ok - $windows_targets
+  # os.family should consistantly be "windows" on, well, Windows
+  $windows_targets = $results.ok_set.filter |$n| { "${n.value['os']['family']}" == 'windows' }
+  $linux_targets = $results.ok_set.filter |$n| { ! ("${n.value['os']['family']}" == 'windows') }
 
   $windows_results = upload_file(
     $cert,
@@ -17,8 +26,6 @@ plan ca_regen::upload_ca_cert(TargetSpec $agents, String $cert) {
     '_catch_errors' => true
   )
 
-  notice($windows_results)
-
   $linux_results = upload_file(
     $cert,
     '/etc/puppetlabs/puppet/ssl/certs/ca.pem',
@@ -26,33 +33,44 @@ plan ca_regen::upload_ca_cert(TargetSpec $agents, String $cert) {
     '_catch_errors' => true
   )
 
+  # Create a hash for *nix and Windows successful and failed uploads and merge them together
+  # filter will return nil if anything doesn't match the lambda, and deep merge will
+  # crunch the leftmost hashes if the rightmost value isn't a hash, so check for that
   $good = deep_merge(
-    { "success" => $windows_results.filter |$result| { $result.ok }.map |$result| {
-        { $result.target.name => $result.value }
-      }.reduce |$memo, $value| { $memo + $value }
+    if $linux_results.any |$r| { $r.ok } {
+      { "success" => $linux_results.filter |$result| { $result.ok }.map |$result| {
+          { $result.target.name => $result.value }
+        }.reduce |$memo, $value| { $memo + $value }
+      }
     },
-    { "success" => $linux_results.filter |$result| { $result.ok }.map |$result| {
-        { $result.target.name => $result.value }
-      }.reduce |$memo, $value| { $memo + $value }
+    if $windows_results.any |$r| { $r.ok } {
+      { "success" => $windows_results.filter |$result| { $result.ok }.map |$result| {
+          { $result.target.name => $result.value }
+        }.reduce |$memo, $value| { $memo + $value }
+      }
     }
   )
-
-  notice($good)
 
   $bad = deep_merge(
-    { "failure" => $windows_results.filter |$result| { ! $result.ok }.map |$result| {
-        { $result.target.name => $result.value }
-      }.reduce |$memo, $value| { $memo + $value }
+    if ! $windows_results.ok {
+      { "failure" => $windows_results.filter |$result| { ! $result.ok }.map |$result| {
+          { $result.target.name => $result.value }
+        }.reduce |$memo, $value| { $memo + $value }
+      }
     },
-    { "failure" => $linux_results.filter |$result| { ! $result.ok }.map |$result| {
-        { $result.target.name => $result.value }
-      }.reduce |$memo, $value| { $memo + $value }
+    if ! $linux_results.ok {
+      { "failure" => $linux_results.filter |$result| { ! $result.ok }.map |$result| {
+          { $result.target.name => $result.value }
+        }.reduce |$memo, $value| { $memo + $value }
+      }
+    },
+    if $not_ok {
+      { "failure" => $not_ok.map |$result| {
+          { $result.target.name => $result.value }
+        }.reduce |$memo, $value| { $memo + $value }
+      }
     }
   )
 
-  notice($bad)
-
   return deep_merge($good, $bad)
-
 }
-

@@ -21,9 +21,10 @@ success() {
 }
 
 # Any temp files stored in variables prefixed by "_tmp" will be removed on exit
-cleanup() {
-  for f in ${!_tmp*}; do rm "${!f}"; done
-}
+# TODO: does this work?
+#cleanup() {
+#  for f in ${!_tmp*}; do rm "${!f}"; done
+#}
 
 #trap 'cleanup' INT TERM
 
