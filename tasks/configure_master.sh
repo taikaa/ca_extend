@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$PT__installdir/ca_regen/files/common.sh"
+source "$PT__installdir/ca_extend/files/common.sh"
 
 \cp -R /etc/puppetlabs/puppet/ssl /var/puppetlabs/backups 2>"$_tmp" || fail "backup_ssl"
 

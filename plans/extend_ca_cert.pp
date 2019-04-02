@@ -1,21 +1,25 @@
-plan ca_regen::ca_regen(TargetSpec $master, Optional[TargetSpec] $compile_masters = undef) {
-  #TODO: test base64 locally
+plan ca_extend::extend_ca_cert(TargetSpec $master, Optional[TargetSpec] $compile_masters = undef) {
+  $b64_test = run_command('echo "test" | base64 -w 0 - &>/dev/null', 'localhost', '_catch_errors' => true)
+  unless $b64_test.ok {
+    fail_plan('This utility requires a version of base64 with the -w flag')
+  }
+
   notice("INFO: Stopping puppet and pe-puppetserver services on $master")
   run_task('service', $master, 'action' => 'stop', 'name' => 'puppet')
   run_task('service', $master, 'action' => 'stop', 'name' => 'pe-puppetserver')
 
   notice("INFO: Extending certificate on master $master")
-  $regen_results =  run_task('ca_regen::extend_ca_cert', $master)
+  $regen_results =  run_task('ca_extend::extend_ca_cert', $master)
   $new_cert = $regen_results.first.value
   $cert_contents = $new_cert['contents']
 
   notice("INFO: Configuring master $master to use new certificate")
-  run_task('ca_regen::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
+  run_task('ca_extend::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
   run_task('service', $master, 'action' => 'start', 'name' => 'puppet')
 
   # Suppress the base64 encoded cert from going to stdout
   $decode = without_default_logging() || {
-    run_command("tmp=$(mktemp) && echo $cert_contents | base64 -d - >\$tmp && echo -n \$tmp", 'localhost', '_catch_errors' => true, '_without_default_logging' => true)
+    run_command("tmp=$(mktemp) && echo $cert_contents | base64 -d - >\$tmp && echo -n \$tmp", 'localhost', '_catch_errors' => true)
   }
 
   unless $decode.ok {
@@ -32,6 +36,6 @@ plan ca_regen::ca_regen(TargetSpec $master, Optional[TargetSpec] $compile_master
 
 
   notice("INFO: CA cert decoded and stored at ${decode.first.value['stdout']}")
-  notice("INFO: Run plan 'ca_regen::upload_ca_cert' to distribute to agents")
+  notice("INFO: Run plan 'ca_extend::upload_ca_cert' to distribute to agents")
 
 }

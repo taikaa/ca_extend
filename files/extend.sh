@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Credit: https://github.com/Sharpie
+
 set -e
 
 PUPPET_BIN='/opt/puppetlabs/puppet/bin'

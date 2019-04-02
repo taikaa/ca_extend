@@ -8,6 +8,6 @@
   },
 
   "implementations": [
-    {"name": "configure_master.sh", "requirements": ["shell"], "files": ["ca_regen/files/common.sh", "ca_regen/files/regen.sh"], "input_method": "environment"}
+    {"name": "configure_master.sh", "requirements": ["shell"], "files": ["ca_extend/files/common.sh", "ca_extend/files/extend.sh"], "input_method": "environment"}
   ]
 }

@@ -1,7 +1,7 @@
-plan ca_regen::upload_ca_cert(TargetSpec $agents, String $cert) {
+plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
   # Work around BOLT-1168
-  run_plan('ca_regen::get_agent_facts', 'agents' => $agents, '_catch_errors' => true)
-  $tmp = run_plan('facts', 'nodes' => $agents, '_catch_errors' => true)
+  run_plan('ca_extend::get_agent_facts', 'nodes' => $nodes, '_catch_errors' => true)
+  $tmp = run_plan('facts', 'nodes' => $nodes, '_catch_errors' => true)
 
   # Extract the ResultSet from an error object
   case $tmp {

@@ -20,14 +20,6 @@ success() {
   exit 0
 }
 
-# Any temp files stored in variables prefixed by "_tmp" will be removed on exit
-# TODO: does this work?
-#cleanup() {
-#  for f in ${!_tmp*}; do rm "${!f}"; done
-#}
-
-#trap 'cleanup' INT TERM
-
 # Test for colors. If unavailable, unset variables are ok
 if tput colors &>/dev/null; then
   green="$(tput setaf 2)"
