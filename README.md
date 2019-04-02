@@ -37,10 +37,13 @@ The functionality of this module is divided into two main plans:
 *  `ca_extend::extend_ca_cert` to extend the certificate and configure the master and any compile masters to use the new certificate
 *  `ca_extend::upload_ca_cert` to distribute the certificate to any number of agents.  Any protocol supported by Bolt can be used, such as `ssh`, `winrm`, or `PCP`.
 
+### Syntax
+
 ```
-bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
+bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns>
 ```
 
-`ca_extend::upload_ca_cert` is used to distribute the new certificate to agents.  The target of the command may be a comma separated node list, a group entry in the inventory file, or a PQL query to PuppetDB.  The output of this plan is a JSON formatted list of node certnames and the output of the command, separated into `succes` and `failure` keys.  See `REFERENCE.md` for examples.
-
+```
+bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --nodes <TargetSpec>
+```
 See `REFERENCE.md` for example commands
