@@ -35,7 +35,7 @@ plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
 
   # Create a hash for *nix and Windows successful and failed uploads and merge them together
   # filter will return nil if anything doesn't match the lambda, and deep merge will
-  # crunch the leftmost hashes if the rightmost value isn't a hash, so check for that
+  # crunch the left hashes if the rightmost value isn't a hash, so check for that
   $good = deep_merge(
     if $linux_results.any |$r| { $r.ok } {
       { "success" => $linux_results.filter |$result| { $result.ok }.map |$result| {

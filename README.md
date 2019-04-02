@@ -18,7 +18,9 @@ A set of Plans and Tasks to extend the expiration date of the certificate for th
 *  `bash` >= 4.0
 *  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.2.0 < 6.0.0
 
-### Inventory Configuration
+## Configuration
+
+### Inventory
 
 This module works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to support simultaneous uploads to \*nix and Windows agents.  See the Bolt documentation for how to configure the inventory.  See the `REFERENCE.md` for a sample inventory file.
 
