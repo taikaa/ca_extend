@@ -1,4 +1,3 @@
-
 # ca_extend
 
 #### Table of Contents
@@ -11,12 +10,28 @@
 
 A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise.
 
+## Setup
+This module requires a [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.8.0 on either a client machine or the Puppet master
+
+The recommended installation procedure for this module is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).  From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.  For example:
+
+```
+~/Boltdir$ cat Puppetfile
+mod 'puppetlabs-stdlib'
+
+mod 'm0dular/ca_extend',
+  git: 'git@github.com:m0dular/ca_extend.git'
+
+~/Boltdir$ bolt puppetfile install
+Successfully synced modules from /home/adrian/Boltdir/Puppetfile to /home/adrian/Boltdir/modules
+```
+
 ## Dependencies
 
 *  A [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.8.0
-*  A `base64` binary on the master and client machine which supports the `-w` flag
-*  `bash` >= 4.0
 *  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.2.0 < 6.0.0
+*  A `base64` binary on the master which supports the `-w` flag
+*  `bash` >= 4.0 on the master
 
 ## Configuration
 
@@ -37,7 +52,7 @@ The functionality of this module is divided into two main plans:
 *  `ca_extend::extend_ca_cert` to extend the certificate and configure the master and any compile masters to use the new certificate
 *  `ca_extend::upload_ca_cert` to distribute the certificate to any number of agents.  Any protocol supported by Bolt can be used, such as `ssh`, `winrm`, or `PCP`.
 
-### Syntax
+### Usage
 
 ```
 bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns>

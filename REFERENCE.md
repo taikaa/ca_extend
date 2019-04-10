@@ -94,9 +94,6 @@ nodes:
 
 ```
 $ bolt command run hostname --nodes linux
-Found unexpected key(s) query in group all
-Found unexpected key(s) query in group windows
-Found unexpected key(s) query in group linux
 Started on pe-201815-compile.platform9.puppet.net...
 Started on pe-201815-master.puppetdebug.vlan...
 Started on pe-201815-agent.platform9.puppet.net...
@@ -115,9 +112,6 @@ Ran on 3 nodes in 0.62 seconds
 
 ```
 $ bolt command run hostname --nodes windows
-Found unexpected key(s) query in group all
-Found unexpected key(s) query in group windows
-Found unexpected key(s) query in group linux
 Started on ljbkgu9t2x3ohqd.delivery.puppetlabs.net...
 Finished on ljbkgu9t2x3ohqd.delivery.puppetlabs.net:
   STDOUT:
