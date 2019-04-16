@@ -12,7 +12,7 @@ plan ca_extend::extend_ca_cert(TargetSpec $master, Optional[TargetSpec] $compile
   run_task('ca_extend::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
   run_task('service', $master, 'action' => 'start', 'name' => 'puppet')
 
-  $tmp = run_command('mktemp', 'localhost')
+  $tmp = run_command('mktemp', 'localhost', '_run_as' => system::env('USER'))
   $tmp_file = $tmp.first.value['stdout'].chomp
   file::write($tmp_file, $cert_contents)
 
