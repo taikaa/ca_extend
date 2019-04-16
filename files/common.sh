@@ -28,6 +28,7 @@ if tput colors &>/dev/null; then
 fi
 
 _tmp="$(mktemp)"
+exec 2>>"$_tmp"
 
 # Use indirection to munge PT_ environment variables
 # e.g. "$PT_version" becomes "$version"
