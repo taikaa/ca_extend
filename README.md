@@ -8,7 +8,7 @@
 
 ## Description
 
-A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise.
+A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise and distrubute the certificate to agent nodes.
 
 ## Setup
 This module requires a [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.8.0 on either a client machine or the Puppet master
