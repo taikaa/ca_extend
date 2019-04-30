@@ -38,13 +38,13 @@ plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
   # crunch the left hashes if the rightmost value isn't a hash, so check for that
   $good = deep_merge(
     if $linux_results.any |$r| { $r.ok } {
-      { "success" => $linux_results.filter |$result| { $result.ok }.map |$result| {
+      { 'success' => $linux_results.filter |$result| { $result.ok }.map |$result| {
           { $result.target.name => $result.value }
         }.reduce |$memo, $value| { $memo + $value }
       }
     },
     if $windows_results.any |$r| { $r.ok } {
-      { "success" => $windows_results.filter |$result| { $result.ok }.map |$result| {
+      { 'success' => $windows_results.filter |$result| { $result.ok }.map |$result| {
           { $result.target.name => $result.value }
         }.reduce |$memo, $value| { $memo + $value }
       }
@@ -53,19 +53,19 @@ plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
 
   $bad = deep_merge(
     if ! $windows_results.ok {
-      { "failure" => $windows_results.filter |$result| { ! $result.ok }.map |$result| {
+      { 'failure' => $windows_results.filter |$result| { ! $result.ok }.map |$result| {
           { $result.target.name => $result.value }
         }.reduce |$memo, $value| { $memo + $value }
       }
     },
     if ! $linux_results.ok {
-      { "failure" => $linux_results.filter |$result| { ! $result.ok }.map |$result| {
+      { 'failure' => $linux_results.filter |$result| { ! $result.ok }.map |$result| {
           { $result.target.name => $result.value }
         }.reduce |$memo, $value| { $memo + $value }
       }
     },
     if $not_ok {
-      { "failure" => $not_ok.map |$result| {
+      { 'failure' => $not_ok.map |$result| {
           { $result.target.name => $result.value }
         }.reduce |$memo, $value| { $memo + $value }
       }

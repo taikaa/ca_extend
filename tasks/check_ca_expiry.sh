@@ -1,5 +1,5 @@
 #!/bin/bash
-declare PT_installdir
+declare PT__installdir
 source "$PT__installdir/ca_extend/files/common.sh"
 
 cert="${cert:-/etc/puppetlabs/puppet/ssl/certs/ca.pem}"

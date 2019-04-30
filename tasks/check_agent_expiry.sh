@@ -1,5 +1,5 @@
 #!/bin/bash
-declare PT_installdir
+declare PT__installdir
 source "$PT__installdir/ca_extend/files/common.sh"
 PUPPET_BIN='/opt/puppetlabs/puppet/bin'
 
