@@ -49,16 +49,30 @@ Another convenient way to specify targets for the `ca_extend::upload_ca_cert` pl
 
 The functionality of this module is divided into two main plans:
 
-*  `ca_extend::extend_ca_cert` to extend the certificate and configure the master and any compile masters to use the new certificate
-*  `ca_extend::upload_ca_cert` to distribute the certificate to any number of agents.  Any protocol supported by Bolt can be used, such as `ssh`, `winrm`, or `PCP`.
+*  `ca_extend::extend_ca_cert`
+    * Extends the CA certificate and configures the master and any compile masters to use the new certificate
+*  `ca_extend::upload_ca_cert`
+    * Distributes the certificate to any number of agents.  Any protocol supported by Bolt can be used, such as `ssh`, `winrm`, or `PCP`.
+
+There are also two complementary tasks to check the expiry of the CA cert and any agent certificates.
+
+* `ca_extend::check_agent_expiry`
+    * Checks if any agent certificates expire by a certain date.  Defaults to 3 months from today
+* `ca_extend::check_agent_expiry`
+    * Checks if the CA certificate expires by a certain date.  Defaults to 3 months from today
 
 ### Usage
 
 ```
 bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns>
 ```
-
 ```
 bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --nodes <TargetSpec>
+```
+```
+bolt task run ca_extend::check_ca_expiry --nodes <TargetSpec>
+```
+```
+bolt task run ca_extend::check_agent_expiry --nodes <TargetSpec>
 ```
 See `REFERENCE.md` for example commands
