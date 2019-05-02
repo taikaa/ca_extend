@@ -232,7 +232,7 @@ Finished: plan ca_extend::upload_ca_cert in 17.41 sec
 * cert - Optional location of certificate on disk to check.  Defaults to /etc/puppetlabs/puppet/ssl/certs/ca.pem.
 * date - Optional YYYY-MM-DD format date against which to check for expiration. Defaults to 3 months in the future.
 
-This task accepts any valid TargetSpec(s) specified by the `--nodes` option. Can be run on any agent node or the master.
+This task accepts any valid TargetSpec(s) specified by the `--nodes` option. Can be run on any \*nix agent node or the master.
 
 #### Steps
 

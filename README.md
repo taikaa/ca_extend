@@ -58,7 +58,7 @@ There are also two complementary tasks to check the expiry of the CA cert and an
 
 * `ca_extend::check_agent_expiry`
     * Checks if any agent certificates expire by a certain date.  Defaults to 3 months from today
-* `ca_extend::check_agent_expiry`
+* `ca_extend::check_ca_expiry`
     * Checks if the CA certificate expires by a certain date.  Defaults to 3 months from today
 
 ### Usage

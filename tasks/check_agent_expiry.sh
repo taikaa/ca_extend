@@ -27,6 +27,5 @@ done
 
 # This is ugly, we as of now we don't include jq binaries in Bolt
 # As long as there aren't weird characters in certnames it should be ok
-IFS=,
-echo -n '{ "valid": ['; echo -n "${valid[*]}";   echo -n '],'
-echo -n '"expiring": ['; echo -n "${expired[*]}"; echo -n ']}'
+(IFS=,; printf '{"valid": [%s], "expiring": [%s]}' "${valid[*]}" "${expired[*]}")
+
