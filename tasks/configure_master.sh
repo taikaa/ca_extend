@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare PT_installdir
+declare PT__installdir
 source "$PT__installdir/ca_extend/files/common.sh"
 
 \cp -R /etc/puppetlabs/puppet/ssl /var/puppetlabs/backups || fail "Error backing up ssl dir"

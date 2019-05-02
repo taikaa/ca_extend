@@ -222,3 +222,64 @@ Finished: plan ca_extend::upload_ca_cert in 17.41 sec
   }
 }
 ```
+
+## Tasks
+
+### `ca_extend::check_ca_expiry`
+
+#### Arguments
+
+* cert - Optional location of certificate on disk to check.  Defaults to /etc/puppetlabs/puppet/ssl/certs/ca.pem.
+* date - Optional YYYY-MM-DD format date against which to check for expiration. Defaults to 3 months in the future.
+
+This task accepts any valid TargetSpec(s) specified by the `--nodes` option. Can be run on any \*nix agent node or the master.
+
+#### Steps
+
+* Uses `openssl` and Unix `date` to determine if the certificate will expire.
+
+#### Output
+
+A JSON object with the status and expiration date, e.g.
+
+```
+{
+  "status": "valid",
+  "expiry date": "Feb 16 01:00:09 2034 GMT"
+}
+```
+
+### `ca_extend::check_agent_expiry`
+
+#### Arguments
+
+* date - Optional YYYY-MM-DD format date against which to check for expiration
+
+This task accepts any valid TargetSpec(s) specified by the `--nodes` option. Should be run on the master.
+
+#### Steps
+
+* Uses `openssl` and Unix `date` to determine if the signed agent certificates under `/etc/puppetlabs/puppet/ssl/ca/signed/` will expire.
+
+#### Output
+
+A JSON object with keys for valid and expiring certificates, e.g.
+
+```
+  {
+    "valid": [
+      "/etc/puppetlabs/puppet/ssl/ca/signed/c4lscpmafhaxjr8.delivery.puppetlabs.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/cd4pe-containers.platform9.puppet.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/iwj6668y4s3vq40.delivery.puppetlabs.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/koo1nzsozj2xeqh.delivery.puppetlabs.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/mafy3pgo98v2vne.delivery.puppetlabs.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-201901-agent.platform9.puppet.net.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-201901-compile.puppetdebug.vlan.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-201901-master.puppetdebug.vlan.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/qgocotu07r3rdpa.delivery.puppetlabs.net.pem"
+    ],
+    "expiring": [
+
+    ]
+  }
+```
