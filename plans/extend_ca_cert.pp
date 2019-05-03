@@ -1,7 +1,8 @@
 plan ca_extend::extend_ca_cert(TargetSpec $master, Optional[TargetSpec] $compile_masters = undef) {
-  notice("INFO: Stopping puppet and pe-puppetserver services on ${master}")
+  notice("INFO: Stopping puppet, pe-postgresql, and pe-puppetserver services on ${master}")
   run_task('service', $master, 'action' => 'stop', 'name' => 'puppet')
   run_task('service', $master, 'action' => 'stop', 'name' => 'pe-puppetserver')
+  run_task('service', $master, 'action' => 'stop', 'name' => 'pe-postgresql')
 
   notice("INFO: Extending certificate on master ${master}")
   $regen_results =  run_task('ca_extend::extend_ca_cert', $master)
