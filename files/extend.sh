@@ -21,7 +21,7 @@ if (( chain_length > 1 )); then
   printf 'This script only works on CA files that contain a single certificate.\n' >&2
   exit 1
 elif (( chain_length != 1 )); then
-  printf 'No certificates found in: %s\n' "${chain_length}" "${ca_cert}" >&2
+  printf 'No certificates found in: %s\n' "${ca_cert}" >&2
   exit 1
 else
   printf '%s certificate found in: %s\n' "${chain_length}" "${ca_cert}" >&2
