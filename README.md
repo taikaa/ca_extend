@@ -20,7 +20,7 @@ The recommended installation procedure for this module is to use a [Bolt Puppetf
 mod 'puppetlabs-stdlib'
 
 mod 'm0dular/ca_extend',
-  git: 'git@github.com:m0dular/ca_extend.git'
+  git: 'https://github.com/m0dular/ca_extend.git'
 
 ~/Boltdir$ bolt puppetfile install
 Successfully synced modules from /home/adrian/Boltdir/Puppetfile to /home/adrian/Boltdir/modules
