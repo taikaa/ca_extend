@@ -6,6 +6,7 @@ plan ca_extend::extend_ca_cert(
   $master.apply_prep
   $master_facts = run_plan('facts', $master).first
 
+  # TODO: why does Rubocop complain about this
   if ! empty("${master_facts['pe_build']}") {
     $services = ['puppet', 'pe-puppetserver', 'pe-postgresql']
     $is_pe = true
@@ -18,7 +19,7 @@ plan ca_extend::extend_ca_cert(
     fail_plan('Puppet installation not detected')
   }
 
-  out::message("INFO: Stopping $services services on ${master}")
+  out::message("INFO: Stopping ${services} services on ${master}")
   $services.each |$s| {
     run_task('service::linux', $master, 'action' => 'stop', 'name' => $s)
   }
@@ -33,8 +34,8 @@ plan ca_extend::extend_ca_cert(
     run_task('ca_extend::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
   }
   else {
-    run_command("/bin/cp ${new_cert['new_cert']} $ssldir/certs/ca.pem", $master)
-    run_command("/bin/cp ${new_cert['new_cert']} $ssldir/ca/ca_crt.pem", $master)
+    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/certs/ca.pem", $master)
+    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/ca/ca_crt.pem", $master)
     run_task('service::linux', $master, 'action' => 'start', 'name' => 'puppetserver')
   }
   run_task('service::linux', $master, 'action' => 'start', 'name' => 'puppet')
