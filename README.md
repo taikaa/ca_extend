@@ -8,7 +8,9 @@
 
 ## Description
 
-A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise and distribute the certificate to agent nodes.
+A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise and open source Puppet and distribute the certificate to agent nodes.
+
+Note that in open source Puppet, if the CA cert is only used by the Puppet CA and no other integrations, there is no further action to take after using the two main plans.  However, if it is used for other purposes such as SSL encrypted PuppetDB traffic, then these integrations will need to have their copy of the cert updated.  If it is stored in any keystores, these will also need to be updated.
 
 The functionality of this module is divided into two main plans:
 
@@ -32,7 +34,7 @@ There are also two complementary tasks to check the expiry of the CA cert and an
     * Checks if the CA certificate expires by a certain date.  Defaults to 3 months from today
 
 ## Setup
-This module requires a [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.8.0 on either a client machine or the Puppet master
+This module requires a [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0 on either a client machine or the Puppet master
 
 The recommended installation procedure for this module is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).  From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.  For example, to install Bolt and the required modules on an EL 7 master:
 
@@ -56,7 +58,7 @@ bolt puppetfile install
 
 ## Dependencies
 
-*  A [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.8.0
+*  A [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
 *  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.2.0 < 6.0.0
 *  A `base64` binary on the master which supports the `-w` flag
 *  `bash` >= 4.0 on the master
