@@ -1,8 +1,8 @@
 {
-  "description": "Check the expiration date of all agents",
+  "description": "Check the expiration date of all agent certificates",
   "parameters": {
     "date": {
-      "description": "YYYY-MM-DD date to test whether the cert will expire by. Defaults to three months from today",
+      "description": "YYYY-MM-DD date to test whether the certificates will expire by. Defaults to three months from today",
       "type": "Optional[String[1]]"
     }
   },

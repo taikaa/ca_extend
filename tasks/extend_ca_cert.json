@@ -1,5 +1,5 @@
 {
-  "description": "Get the platform release of a node",
+  "description": "Extend CA certificate expiry date",
   "implementations": [
     {"name": "extend_ca_cert.sh", "requirements": ["shell"], "files": ["ca_extend/files/common.sh", "ca_extend/files/extend.sh"], "input_method": "environment"}
   ]

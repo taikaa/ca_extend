@@ -80,5 +80,5 @@ yes | "${PUPPET_BIN}/openssl" ca \
   -enddate "${end_date}" \
   -out "${new_ca_cert}" >&2
 
-printf '\nRenewed CA certificate created\n' >&2
+printf '\nRenewed CA certificate\n' >&2
 printf '%s\n' "${new_ca_cert}"

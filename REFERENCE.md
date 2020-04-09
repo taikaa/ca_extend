@@ -153,26 +153,27 @@ $ bolt plan run ca_extend::extend_ca_cert master=pe-master.example.com compile_m
 Starting: plan ca_extend::extend_ca_cert
 Starting: command 'echo "test" | base64 -w 0 - &>/dev/null' on localhost
 Finished: command 'echo "test" | base64 -w 0 - &>/dev/null' with 0 failures in 0.0 sec
-INFO: Stopping puppet and pe-puppetserver services on pe-master.example.com
+INFO: Stopping puppet services on pe-master.example.com
 Starting: task service on pe-master.example.com
 Finished: task service with 0 failures in 0.85 sec
 Starting: task service on pe-master.example.com
 Finished: task service with 0 failures in 1.95 sec
-INFO: Extending certificate on master pe-master.example.com
+INFO: Extending CA certificate on pe-master.example.com
 Starting: task ca_extend::extend_ca_cert on pe-master.example.com
 Finished: task ca_extend::extend_ca_cert with 0 failures in 2.92 sec
-INFO: Configuring master pe-master.example.com to use new certificate
+INFO: Configuring pe-master.example.com to use the extended CA certificate
 Starting: task ca_extend::configure_master on pe-master.example.com
 Finished: task ca_extend::configure_master with 0 failures in 95.72 sec
 Starting: task service on pe-master.example.com
 Finished: task service with 0 failures in 1.64 sec
-INFO: Configuring compile master(s) pe-compiler.example.com to use new certificate
+INFO: Stopping puppet services on compilers (pe-compiler.example.com)
+INFO: Configuring compilers (pe-compiler.example.com) to use the extended CA certificate
 Starting: file upload from /tmp/ca.pem to /etc/puppetlabs/puppet/ssl/certs/ca.pem on pe-compiler.example.com
 Finished: file upload from /tmp/ca.pem to /etc/puppetlabs/puppet/ssl/certs/ca.pem with 0 failures in 0.59 sec
 Starting: task run_agent on pe-compiler.example.com
 Finished: task run_agent with 0 failures in 44.34 sec
-INFO: CA cert decoded and stored at /tmp/ca.pem
-INFO: Run plan 'ca_extend::upload_ca_cert' to distribute to agents
+INFO: Extended CA certificate decoded and stored at /tmp/ca.pem
+INFO: Run the 'ca_extend::upload_ca_cert' plan to distribute the extended CA certificate to agents
 Finished: plan ca_extend::extend_ca_cert in 148.06 sec
 ```
 

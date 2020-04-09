@@ -1,4 +1,7 @@
-plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
+plan ca_extend::upload_ca_cert(
+  TargetSpec $nodes,
+  String     $cert
+) {
   # Work around BOLT-1168
   run_plan('ca_extend::get_agent_facts', 'nodes' => $nodes, '_catch_errors' => true)
   $tmp = run_plan('facts', 'targets' => $nodes, '_catch_errors' => true)
@@ -15,7 +18,7 @@ plan ca_extend::upload_ca_cert(TargetSpec $nodes, String $cert) {
     }
   }
 
-  # os.family should consistantly be "windows" on, well, Windows
+  # The os.family fact should consistantly be "windows" on, well, Windows.
   $windows_targets = $results.ok_set.filter |$n| { "${n.value['os']['family']}" == 'windows' }
   $linux_targets = $results.ok_set.filter |$n| { ! ("${n.value['os']['family']}" == 'windows') }
 

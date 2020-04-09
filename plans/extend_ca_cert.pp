@@ -1,35 +1,34 @@
 plan ca_extend::extend_ca_cert(
-  TargetSpec $master,
+  TargetSpec           $master,
   Optional[TargetSpec] $compile_masters = undef,
-  $ssldir = '/etc/puppetlabs/puppet/ssl',
+  $ssldir                               = '/etc/puppetlabs/puppet/ssl',
 ) {
   $master.apply_prep
   $master_facts = run_plan('facts', $master).first
 
-  # TODO: why does Rubocop complain about this
-  if ! empty("${master_facts['pe_build']}") {
-    $services = ['puppet', 'pe-puppetserver', 'pe-postgresql']
+  if $master_facts['pe_build'] {
     $is_pe = true
+    $services = ['puppet', 'pe-puppetserver', 'pe-postgresql']
   }
-  elsif "${master_facts['puppetversion']}" {
+  elsif $master_facts['puppetversion'] {
     $is_pe = false
     $services = ['puppet', 'puppetserver']
   }
   else {
-    fail_plan('Puppet installation not detected')
+    fail_plan("Puppet not detected on ${master}")
   }
 
-  out::message("INFO: Stopping ${services} services on ${master}")
-  $services.each |$s| {
-    run_task('service::linux', $master, 'action' => 'stop', 'name' => $s)
+  out::message("INFO: Stopping Puppet services on ${master}")
+  $services.each |$service| {
+    run_task('service::linux', $master, 'action' => 'stop', 'name' => $service)
   }
 
-  out::message("INFO: Extending certificate on master ${master}")
-  $regen_results =  run_task('ca_extend::extend_ca_cert', $master)
+  out::message("INFO: Extending CA certificate on ${master}")
+  $regen_results = run_task('ca_extend::extend_ca_cert', $master)
   $new_cert = $regen_results.first.value
   $cert_contents = base64('decode', $new_cert['contents'])
 
-  out::message("INFO: Configuring master ${master} to use new certificate")
+  out::message("INFO: Configuring ${master} to use the extended CA certificate")
   if $is_pe {
     run_task('ca_extend::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
   }
@@ -45,17 +44,17 @@ plan ca_extend::extend_ca_cert(
   file::write($tmp_file, $cert_contents)
 
   if $compile_masters {
-    out::message("INFO: Stopping puppet service on ${compile_masters}")
-
+    out::message("INFO: Stopping Puppet services on compilers (${compile_masters})")
     run_task('service::linux', $compile_masters, 'action' => 'stop', 'name' => 'puppet')
-    out::message("INFO: Configuring compile master(s) ${compile_masters} to use new certificate")
+
+    out::message("INFO: Configuring compilers (${compile_masters}) to use the extended CA certificate")
     upload_file($tmp_file, '/etc/puppetlabs/puppet/ssl/certs/ca.pem', $compile_masters)
 
-    # Just running Puppet with the new cert in place should be enough
+    # Just running Puppet with the new CA certificate in place should be enough.
     run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $compile_masters)
     run_task('service::linux', $compile_masters, 'action' => 'start', 'name' => 'puppet')
   }
 
-  out::message("INFO: CA cert decoded and stored at ${tmp_file}")
-  out::message("INFO: Run plan 'ca_extend::upload_ca_cert' to distribute to agents")
+  out::message("INFO: Extended CA certificate decoded and stored at ${tmp_file}")
+  out::message("INFO: Run the 'ca_extend::upload_ca_cert' plan to distribute the extended CA certificate to agents")
 }
