@@ -13,7 +13,7 @@
 
 This module can extend a certificate authority (CA) that's about to expire or has already expired.
 
-A Puppet CA certificate is only valid for a finite time (usually five years), after which it expires.
+A Puppet CA certificate is only valid for a finite time (a new installation of PE 2019.x / Puppet 6.x will create a 15 year CA, while earlier versions will create a 5 year CA; and upgrading does not extend the CA.), after which it expires.
 When a CA certificate expires, Puppet services will no longer accept any certificates signed by that CA, and your Puppet infrastructure will immediately stop working.
 
 If your CA certificate is expiring soon (or it's already expired), you need to:

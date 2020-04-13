@@ -238,7 +238,7 @@ Finished: plan ca_extend::upload_ca_cert in 17.41 sec
 
 #### Arguments
 
-* cert - Optional location of CA certificate on disk to check.  Defaults to ``/etc/puppetlabs/puppet/ssl/certs/ca.pem`.
+* cert - Optional location of CA certificate on disk to check. Defaults to `/etc/puppetlabs/puppet/ssl/certs/ca.pem`.
 * date - Optional YYYY-MM-DD format date against which to check for expiration. Defaults to three months from today.
 
 This task accepts any valid TargetSpec(s) specified by the `--targets` option.
