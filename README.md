@@ -2,48 +2,73 @@
 
 #### Table of Contents
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with ca_extend](#setup)
-3. [Usage - Configuration options and additional functionality](#usage)
+1. [Overview](#overview)
+1. [Description - What the module does and why it is useful](#description)
+1. [Setup - The basics of getting started with this module](#setup)
+1. [Usage - Configuration options and additional functionality](#usage)
+1. [Reference - An under-the-hood peek at what the module is doing](#reference)
+1. [Development - Guide for contributing to the module](#development)
+
+## Overview
+
+This module can extend a certificate authority (CA) that's about to expire or has already expired.
+
+A Puppet CA certificate is only valid for a finite time (a new installation of PE 2019.x / Puppet 6.x will create a 15 year CA, while earlier versions will create a 5 year CA; and upgrading does not extend the CA.), after which it expires.
+When a CA certificate expires, Puppet services will no longer accept any certificates signed by that CA, and your Puppet infrastructure will immediately stop working.
+
+If your CA certificate is expiring soon (or it's already expired), you need to:
+
+* Generate a new CA certificate using the existing CA keypair.
+* Distribute the new CA certificate to agents.
+
+This module can automate those tasks.
 
 ## Description
 
-A set of Plans and Tasks to extend the expiration date of the certificate for the certificate authority in Puppet Enterprise and open source Puppet and distribute the certificate to agent nodes.
+This module is composed of Plans and Tasks to extend the expiration date of the CA certificate in Puppet Enterprise (and Puppet Open Source) and distribute that CA certificate to agents.
 
-Note that in open source Puppet, if the CA cert is only used by the Puppet CA and no other integrations, there is no further action to take after using the two main plans.  However, if it is used for other purposes such as SSL encrypted PuppetDB traffic, then these integrations will need to have their copy of the cert updated.  If it is stored in any keystores, these will also need to be updated.
+Note that, with Puppet Open Source, if the CA certificate is only used by the Puppet CA and no other integrations, there is no further action to take after using the two Plans.
+However, if it is used for other integrations (such as SSL encrypted PuppetDB traffic) then those integrations will need to have their copy of the CA certificate updated. 
+If the CA certificate is stored in any keystores, those will also need to be updated.
 
-The functionality of this module is divided into two main plans:
+The functionality of this module is composed into two Plans:
 
 *  `ca_extend::extend_ca_cert`
-    * Extends the CA certificate and configures the master and any compile masters to use the new certificate
+    * Extend the CA certificate and configure the Master and any Compilers to use that extended certificate.
 *  `ca_extend::upload_ca_cert`
-    * Distributes the certificate to any number of agents.  Any protocol supported by Bolt can be used, such as `ssh`, `winrm`, or `PCP`.
+    * Distribute the CA certificate to agents using any transport supported by Puppet Bolt, such as `ssh`, `winrm`, or `pcp`.
 
-Regardless of whether the CA cert has passed expiration or not, the `extend_ca_cert` plan may be used to extend its expiration date in-place and configure the master and compilers to use it.
+Regardless of whether the CA certificate is expired, the `extend_ca_cert` plan may be used to extend its expiration date in-place and configure the Master and any Compilers to use it.
 
-After the CA is functional again (or if it had yet to expire), there are two options for distributing the new cert to agents.
+After the CA certificate has been extended, there are two methods for distributing it to agents.
 
-* Using the `ca_extend::upload_ca_cert` plan or another method to copy the new `ca.pem` into place on agents.
-* Deleting `ca.pem` from agents and letting them download the file as part of the next Puppet agent run.  The agent will re-download this file only if it is absent, so it must be deleted to get a new copy using this method.
+* Using the `ca_extend::upload_ca_cert` plan or another method to copy the CA certificate to agents.
+* Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run. The agent will download that file only if it is absent, so it must be deleted to use this method.
 
-There are also two complementary tasks to check the expiry of the CA cert and any agent certificates.
+There are also two complementary tasks to check the expiration date of the CA certificate or any agent certificates.
 
-* `ca_extend::check_agent_expiry`
-    * Checks if any agent certificates expire by a certain date.  Defaults to 3 months from today
 * `ca_extend::check_ca_expiry`
-    * Checks if the CA certificate expires by a certain date.  Defaults to 3 months from today
+    * Checks if the CA certificate expires by a certain date. Defaults to three months from today.
+* `ca_extend::check_agent_expiry`
+    * Checks if any agent certificate expires by a certain date. Defaults to three months from today.
+    
+** If the CA certificate is expiring or expired, you must extend it as soon as possible. **
 
 ## Setup
-This module requires a [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0 on either a client machine or the Puppet master
 
-The recommended installation procedure for this module is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).  From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.  For example, to install Bolt and the required modules on an EL 7 master:
+This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0 on either on the Master or an agent.
 
-```
+The recommended procedure for installation this module is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).
+From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.
+
+For example, to install Bolt and the required modules on a Master running EL 7:
+
+```bash
 sudo rpm -Uvh https://yum.puppet.com/puppet-tools-release-el-7.noarch.rpm
 sudo yum install puppet-bolt
 ```
 
-```
+```bash
 mkdir -p ~/Boltdir
 cd !$
 
@@ -56,37 +81,83 @@ EOF
 bolt puppetfile install
 ```
 
-## Dependencies
+### Dependencies
 
-*  A [Bolt installation](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
-*  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.2.0 < 6.0.0
-*  A `base64` binary on the master which supports the `-w` flag
+*  A [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
+*  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html)
+*  A `base64` binary on the Master which supports the `-w` flag
 *  `bash` >= 4.0 on the master
 
-## Configuration
+### Configuration
 
-### Inventory
+#### Inventory
 
-This module works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to support simultaneous uploads to \*nix and Windows agents.  See the Bolt documentation for how to configure the inventory.  See the `REFERENCE.md` for a sample inventory file.
+This module works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to allow for simultaneous uploads to \*nix and Windows agents.
+See the Bolt documentation for how to configure an inventory file.
+See the `REFERENCE.md` for a sample inventory file.
 
-Alternatively, one can use an `ssh` config file if only using this protocol to connect to agents.  Bolt defaults to using `ssh`, which in turn will use `~/.ssh/config` for options such as the username and identity file.
+Alternatively, you can use an `ssh` config file if you will only use that transport to upload the CA certificate to agents.
+Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`.
 
-### Connecting to PuppetDB
+#### PuppetDB
 
-Another convenient way to specify targets for the `ca_extend::upload_ca_cert` plan is by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which the [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) can be used to specify a node list. See `REFERENCE.md` for an example.
+A convenient way to specify targets for the `ca_extend::upload_ca_cert` plan is by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) can be used to specify targets.
+See `REFERENCE.md` for an example.
 
-### Examples
+#### PCP
 
-```
+Note that you cannot use the Bolt `pcp` transport if your CA certificate has already expired, as the PXP-Agent service itself depends upon a valid CA certificate.
+
+### Usage
+
+```bash
 bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns>
 ```
+
+Note that if you are running the `extend_ca_cert` on the Master, you can avoid potential Bolt transport issues by specifying `master=localhost`. 
+
+(The `master` and (optional) `compile_masters` parameters are Bolt targets, not certificate data.)
+
+```bash
+bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
 ```
-bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --nodes <TargetSpec>
+
+```bash
+bolt task run ca_extend::check_ca_expiry --targets <TargetSpec>
 ```
+
+```bash
+bolt task run ca_extend::check_agent_expiry --targets <TargetSpec>
 ```
-bolt task run ca_extend::check_ca_expiry --nodes <TargetSpec>
-```
-```
-bolt task run ca_extend::check_agent_expiry --nodes <TargetSpec>
-```
-See `REFERENCE.md` for more detailed example commands
+
+See `REFERENCE.md` for more detailed examples.
+
+## Reference
+
+Puppet's security is based on a PKI using X.509 certificates.
+
+This module's `ca_extend::extend_ca_cert` plan creates a new self-signed CA certificate using the same keypair as the prior self-signed CA. The new CA has the same:
+
+* Keypair.
+* Subject.
+* Issuer.
+* X509v3 Subject Key Identifier (the fingerprint of the public key).
+
+The new CA has a different:
+
+* Authority Key Identifier (just the serial number, since it's self-signed).
+* Validity period (the point of the whole exercise).
+* Signature (since we changed the serial number and validity period).
+
+Since Puppet's services (and other services that use Puppet's PKI) validate certificates by trusting a self-signed CA and comparing its public key to the Signatures and Authority Key Identifiers of the certificates it has issued,
+it's possible to issue a new self-signed CA certificate based on a prior keypair without invalidating any certificates issued by the old CA.
+Once you've done that, it's just a matter of delivering the new CA certificate to every participant in the PKI.
+
+## Development
+
+Puppet Labs modules on the Puppet Forge are open source projects, and community contributions are essential for keeping them great.
+We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
+We want to keep it as easy as possible to contribute changes so that our modules work in your environment.
+There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+
+For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)

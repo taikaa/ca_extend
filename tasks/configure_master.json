@@ -1,8 +1,8 @@
 {
-  "description": "Backup ssldir and move new CA cert",
+  "description": "Backup ssldir and copy newly generated CA certificate",
   "parameters": {
     "new_cert": {
-      "description": "Location of the newly generated CA cert",
+      "description": "Location of the newly generated CA certificate",
       "type": "String"
     }
   },
