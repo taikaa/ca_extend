@@ -1,10 +1,10 @@
 plan ca_extend::extend_ca_cert(
-  TargetSpec           $master,
+  TargetSpec $targets,
   Optional[TargetSpec] $compile_masters = undef,
   $ssldir                               = '/etc/puppetlabs/puppet/ssl',
 ) {
-  $master.apply_prep
-  $master_facts = run_plan('facts', $master).first
+  $targets.apply_prep
+  $master_facts = run_plan('facts', $targets).first
 
   if $master_facts['pe_build'] {
     $is_pe = true
@@ -15,29 +15,29 @@ plan ca_extend::extend_ca_cert(
     $services = ['puppet', 'puppetserver']
   }
   else {
-    fail_plan("Puppet not detected on ${master}")
+    fail_plan("Puppet not detected on ${targets}")
   }
 
-  out::message("INFO: Stopping Puppet services on ${master}")
+  out::message("INFO: Stopping Puppet services on ${targets}")
   $services.each |$service| {
-    run_task('service::linux', $master, 'action' => 'stop', 'name' => $service)
+    run_task('service::linux', $targets, 'action' => 'stop', 'name' => $service)
   }
 
-  out::message("INFO: Extending CA certificate on ${master}")
-  $regen_results = run_task('ca_extend::extend_ca_cert', $master)
+  out::message("INFO: Extending CA certificate on ${targets}")
+  $regen_results = run_task('ca_extend::extend_ca_cert', $targets)
   $new_cert = $regen_results.first.value
   $cert_contents = base64('decode', $new_cert['contents'])
 
-  out::message("INFO: Configuring ${master} to use the extended CA certificate")
+  out::message("INFO: Configuring ${targets} to use the extended CA certificate")
   if $is_pe {
-    run_task('ca_extend::configure_master', $master, 'new_cert' => $new_cert['new_cert'])
+    run_task('ca_extend::configure_master', $targets, 'new_cert' => $new_cert['new_cert'])
   }
   else {
-    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/certs/ca.pem", $master)
-    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/ca/ca_crt.pem", $master)
-    run_task('service::linux', $master, 'action' => 'start', 'name' => 'puppetserver')
+    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/certs/ca.pem", $targets)
+    run_command("/bin/cp ${new_cert['new_cert']} ${ssldir}/ca/ca_crt.pem", $targets)
+    run_task('service::linux', $targets, 'action' => 'start', 'name' => 'puppetserver')
   }
-  run_task('service::linux', $master, 'action' => 'start', 'name' => 'puppet')
+  run_task('service::linux', $targets, 'action' => 'start', 'name' => 'puppet')
 
   $tmp = run_command('mktemp', 'localhost', '_run_as' => system::env('USER'))
   $tmp_file = $tmp.first.value['stdout'].chomp

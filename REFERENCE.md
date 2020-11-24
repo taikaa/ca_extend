@@ -149,7 +149,7 @@ The output consists of Bolt logging messages and any failures of the steps invol
 ### Example
 
 ```bash
-$ bolt plan run ca_extend::extend_ca_cert master=pe-master.example.com compile_masters=pe-compiler.example.com --run-as root
+$ bolt plan run ca_extend::extend_ca_cert --targets pe-master.example.com compile_masters=pe-compiler.example.com --run-as root
 Starting: plan ca_extend::extend_ca_cert
 Starting: command 'echo "test" | base64 -w 0 - &>/dev/null' on localhost
 Finished: command 'echo "test" | base64 -w 0 - &>/dev/null' with 0 failures in 0.0 sec
