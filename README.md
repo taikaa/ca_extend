@@ -81,6 +81,8 @@ EOF
 bolt puppetfile install
 ```
 
+See the "Usage" section for how to run the tasks and plans remotely or locally on the master.
+
 ### Dependencies
 
 *  A [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
@@ -111,10 +113,14 @@ Note that you cannot use the Bolt `pcp` transport if your CA certificate has alr
 ### Usage
 
 ```bash
-bolt plan run ca_extend::extend_ca_cert master=<master_fqdn> compile_masters=<comma_separated_compile_master_fqdns>
+bolt plan run ca_extend::extend_ca_cert --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
 ```
 
-Note that if you are running the `extend_ca_cert` on the Master, you can avoid potential Bolt transport issues by specifying `master=localhost`. 
+Note that if you are running `extend_ca_cert` locally on the Master, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.
+
+```
+bolt plan run ca_extend::extend_ca_cert --targets local://$(hostname -f) --run-as root
+```
 
 (The `master` and (optional) `compile_masters` parameters are Bolt targets, not certificate data.)
 
