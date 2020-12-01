@@ -4,7 +4,7 @@ plan ca_extend::extend_ca_cert(
   $ssldir                               = '/etc/puppetlabs/puppet/ssl',
 ) {
   $targets.apply_prep
-  $master_facts = run_plan('facts', $targets).first
+  $master_facts = run_task('facts', $targets, '_catch_errors' => true).first
 
   if $master_facts['pe_build'] {
     $is_pe = true
