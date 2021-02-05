@@ -4,8 +4,9 @@
   "author": "Adrian Parreiras Horta",
   "summary": "A set of Bolt Plans and Tasks to extend the CA cert in Puppet Enterprise",
   "license": "GPL-2.0-only",
-  "source": "https://github.com/m0dular/ca_extend",
-  "project_page": "https://github.com/m0dular/ca_extend",
+  "source": "https://github.com/puppetlabs/ca_extend",
+  "project_page": "https://github.com/puppetlabs/ca_extend",
+  "issues_url": "https://github.com/puppetlabs/ca_extend/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
@@ -16,7 +17,8 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -28,7 +30,8 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -40,13 +43,15 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "8"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "16.04"
+        "16.04",
+        "18.04"
       ]
     }
   ],
