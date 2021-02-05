@@ -112,6 +112,23 @@ Note that you cannot use the Bolt `pcp` transport if your CA certificate has alr
 
 ### Usage
 
+First, check the expiration of the Puppet agent certificate by running the following command as root on the Master:
+
+```
+/opt/puppetlabs/puppet/bin/openssl x509 -in "$(/opt/puppetlabs/bin/puppet config print hostcert)" -enddate -noout
+```
+
+If, and only if, the `notAfter` date printed has already passed, then the Master certificate has expired and must be cleaned up before the CA can be regenerated:
+
+```bash
+mkdir -p -m 0700 /var/puppetlabs/backups
+(umask 0077 && tar czf "/var/puppetlabs/backups/ssl-$(date +'%Y%m%d%H%M%S')".tar.gz "$(puppet config print ssldir)")
+
+find "$(puppet config print ssldir)" -name "$(puppet config print certname).pem" -delete
+```
+
+Once the expiration has been checked, the CA can be regenerated.
+
 ```bash
 bolt plan run ca_extend::extend_ca_cert --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
 ```
