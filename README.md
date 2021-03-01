@@ -58,8 +58,7 @@ There are also two complementary tasks to check the expiration date of the CA ce
 
 This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0 on either on the Master or an agent.
 
-The recommended procedure for installation this module is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).
-From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.
+The recommended procedure for installing this module is to use a Bolt Project.  When creating a [Bolt project](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and initialize the project.
 
 For example, to install Bolt and the required modules on a Master running EL 7:
 
@@ -68,17 +67,37 @@ sudo rpm -Uvh https://yum.puppet.com/puppet-tools-release-el-7.noarch.rpm
 sudo yum install puppet-bolt
 ```
 
+If your primary Puppet server or workstation has internet access, the project can be initialized with the needed dependencies with the following:
 ```bash
-mkdir -p ~/Boltdir
+mkdir ca_extend
 cd !$
 
-cat >>Puppetfile <<EOF
-mod 'puppetlabs-stdlib'
+bolt project init expiry --modules puppetlabs-stdlib,puppetlabs-ca_extend
+```
 
-mod 'puppetlabs-ca_extend'
-EOF
+Otherwise, if your primary Puppet server or workstation operates behind a proxy, initialize the project without the `--modules` option
+```bash
+mkdir ca_extend
+cd !$
 
-bolt puppetfile install
+bolt project init expiry
+```
+
+Then edit your `bolt-project.yaml` to use the proxy according to the [documentation](https://puppet.com/docs/bolt/latest/bolt_installing_modules.html#install-modules-using-a-proxy).  Next, add the module dependencies to `bolt-project.yaml`:
+
+```
+---
+name: expiry
+modules:
+  - name: puppetlabs-stdlib
+  - name: puppetlabs-ca_extend
+
+```
+
+Finally, install the modules.
+
+```bash
+bolt module install
 ```
 
 See the "Usage" section for how to run the tasks and plans remotely or locally on the master.
