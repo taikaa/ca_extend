@@ -56,7 +56,7 @@ There are also two complementary tasks to check the expiration date of the CA ce
 
 ## Setup
 
-This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0 on either on the Master or an agent.
+This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.0.0 on either on the Master or an agent.
 
 The recommended procedure for installing this module is to use a Bolt Project.  When creating a [Bolt project](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and initialize the project.
 
