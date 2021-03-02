@@ -34,11 +34,11 @@ If the CA certificate is stored in any keystores, those will also need to be upd
 The functionality of this module is composed into two Plans:
 
 *  `ca_extend::extend_ca_cert`
-    * Extend the CA certificate and configure the Master and any Compilers to use that extended certificate.
+    * Extend the CA certificate and configure the primary Puppet server and any Compilers to use that extended certificate.
 *  `ca_extend::upload_ca_cert`
     * Distribute the CA certificate to agents using any transport supported by Puppet Bolt, such as `ssh`, `winrm`, or `pcp`.
 
-Regardless of whether the CA certificate is expired, the `extend_ca_cert` plan may be used to extend its expiration date in-place and configure the Master and any Compilers to use it.
+Regardless of whether the CA certificate is expired, the `extend_ca_cert` plan may be used to extend its expiration date in-place and configure the primary Puppet server and any Compilers to use it.
 
 After the CA certificate has been extended, there are two methods for distributing it to agents.
 
@@ -51,16 +51,43 @@ There are also two complementary tasks to check the expiration date of the CA ce
     * Checks if the CA certificate expires by a certain date. Defaults to three months from today.
 * `ca_extend::check_agent_expiry`
     * Checks if any agent certificate expires by a certain date. Defaults to three months from today.
-    
+
 ** If the CA certificate is expiring or expired, you must extend it as soon as possible. **
 
 ## Setup
 
-This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 3.0.0 on either on the Master or an agent.
+This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.2.0 on either on the primary Puppet server or a workstation with connectivity to the primary.
 
-The recommended procedure for installing this module is to use a Bolt Project.  When creating a [Bolt project](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and initialize the project.
+The installation procedure will differ depending on the version of Bolt.  If possible, using Bolt >= 3.0.0 is recommended.  For example, this will install the latest Bolt version on EL 7.
 
-For example, to install Bolt and the required modules on a Master running EL 7:
+```bash
+sudo rpm -Uvh https://yum.puppet.com/puppet-tools-release-el-7.noarch.rpm
+sudo yum install puppet-bolt
+```
+
+The following two sections show how to install the module dependencies depending on the installed version of Bolt.
+
+### Bolt >= 1.2.0 < 3.0.0
+
+The recommended procedure for these versions is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).
+From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.  For example:
+
+```bash
+mkdir -p ~/Boltdir
+cd !$
+
+cat >>Puppetfile <<EOF
+mod 'puppetlabs-stdlib'
+
+mod 'puppetlabs-ca_extend'
+EOF
+
+bolt puppetfile install
+```
+
+### Bolt >= 3.0.0
+
+The recommended procedure for these versions is to use a Bolt Project.  When creating a [Bolt project](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and initialize the project.  For example:
 
 ```bash
 sudo rpm -Uvh https://yum.puppet.com/puppet-tools-release-el-7.noarch.rpm
@@ -100,14 +127,14 @@ Finally, install the modules.
 bolt module install
 ```
 
-See the "Usage" section for how to run the tasks and plans remotely or locally on the master.
+See the "Usage" section for how to run the tasks and plans remotely or locally on the primary Puppet server.
 
 ### Dependencies
 
 *  A [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
 *  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html)
-*  A `base64` binary on the Master which supports the `-w` flag
-*  `bash` >= 4.0 on the master
+*  A `base64` binary on the primary Puppet server which supports the `-w` flag
+*  `bash` >= 4.0 on the primary Puppet server
 
 ### Configuration
 
@@ -131,13 +158,13 @@ Note that you cannot use the Bolt `pcp` transport if your CA certificate has alr
 
 ### Usage
 
-First, check the expiration of the Puppet agent certificate by running the following command as root on the Master:
+First, check the expiration of the Puppet agent certificate by running the following command as root on the primary Puppet server:
 
 ```
 /opt/puppetlabs/puppet/bin/openssl x509 -in "$(/opt/puppetlabs/bin/puppet config print hostcert)" -enddate -noout
 ```
 
-If, and only if, the `notAfter` date printed has already passed, then the Master certificate has expired and must be cleaned up before the CA can be regenerated:
+If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated:
 
 ```bash
 mkdir -p -m 0700 /var/puppetlabs/backups
@@ -152,13 +179,11 @@ Once the expiration has been checked, the CA can be regenerated.
 bolt plan run ca_extend::extend_ca_cert --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
 ```
 
-Note that if you are running `extend_ca_cert` locally on the Master, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.
+Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.
 
 ```
 bolt plan run ca_extend::extend_ca_cert --targets local://$(hostname -f) --run-as root
 ```
-
-(The `master` and (optional) `compile_masters` parameters are Bolt targets, not certificate data.)
 
 ```bash
 bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
