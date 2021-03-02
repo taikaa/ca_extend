@@ -1,6 +1,7 @@
 #!/bin/bash
 
 declare PT__installdir
+# shellcheck disable=SC1090
 source "$PT__installdir/ca_extend/files/common.sh"
 
 echo "test" | base64 -w 0 - &>/dev/null || fail "This script requires a version of base64 with the -w flag"

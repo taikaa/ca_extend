@@ -1,6 +1,7 @@
 #!/bin/bash
 
 declare PT__installdir
+# shellcheck disable=SC1090
 source "$PT__installdir/ca_extend/files/common.sh"
 PUPPET_BIN='/opt/puppetlabs/puppet/bin'
 
@@ -20,7 +21,7 @@ expiry_date="$("${PUPPET_BIN}/openssl" x509 -enddate -noout -in /etc/puppetlabs/
 expiry_date="${expiry_date#*=}"
 expiry_seconds="$(date --date="$expiry_date" +"%s")" || fail "Error calculating expiry date from enddate"
 
-if (( $to_date >= $expiry_seconds )); then
+if (( to_date >= expiry_seconds )); then
   success "{ \"status\": \"will expire\", \"expiry date\": \"$expiry_date\" }"
 else
   success "{ \"status\": \"valid\", \"expiry date\": \"$expiry_date\" }"
