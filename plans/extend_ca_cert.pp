@@ -24,7 +24,7 @@ plan ca_extend::extend_ca_cert(
     unless $out.ok {
       fail_plan($out.value['message'])
     }
-    if $out.value['status'] == "warn" {
+    if $out.value['status'] == 'warn' {
       warning($out.value['message'])
     }
   }
