@@ -132,6 +132,7 @@ Ran on 1 node in 0.70 seconds
 
 * master - Fully-qualified domain name of the Master acting as the Certificate Authority
 * compile_masters - Optional comma-separated list of fully-qualified domain names of Compilers
+* regen_primary_cert - Boolean for whether to also regenrate the primary server certificate.  Defaults to `false`
 
 #### Steps
 
