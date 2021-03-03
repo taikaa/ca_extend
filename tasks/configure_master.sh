@@ -6,7 +6,7 @@ source "$PT__installdir/ca_extend/files/common.sh"
 PUPPET_BIN='/opt/puppetlabs/puppet/bin'
 
 mkdir -p /var/puppetlabs/backups/
-cp -R /etc/puppetlabs/puppet/ssl /var/puppetlabs/backups || fail "Error backing up '/etc/puppetlabs/puppet/ssl'"
+cp -aR /etc/puppetlabs/puppet/ssl /var/puppetlabs/backups || fail "Error backing up '/etc/puppetlabs/puppet/ssl'"
 
 # shellcheck disable=SC2154
 [[ $regen_primary_cert == "true" ]] && {
