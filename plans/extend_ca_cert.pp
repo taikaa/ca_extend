@@ -20,7 +20,13 @@ plan ca_extend::extend_ca_cert(
   }
 
   if $is_pe and ! $regen_primary_cert{
-    run_task('ca_extend::check_primary_cert', $targets)
+    $out = run_task('ca_extend::check_primary_cert', $targets, '_catch_errors' => true).first
+    unless $out.ok {
+      fail_plan($out.value['message'])
+    }
+    if $out.value['status'] == "warn" {
+      warning($out.value['message'])
+    }
   }
 
   out::message("INFO: Stopping Puppet services on ${targets}")
