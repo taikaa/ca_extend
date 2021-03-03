@@ -164,19 +164,11 @@ First, check the expiration of the Puppet agent certificate by running the follo
 /opt/puppetlabs/puppet/bin/openssl x509 -in "$(/opt/puppetlabs/bin/puppet config print hostcert)" -enddate -noout
 ```
 
-If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated:
+If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated.  This can be accomplished by passing `regen_primary_cert=true` to the `ca_extend::extend_ca_cert` plan.
+
 
 ```bash
-mkdir -p -m 0700 /var/puppetlabs/backups
-(umask 0077 && tar czf "/var/puppetlabs/backups/ssl-$(date +'%Y%m%d%H%M%S')".tar.gz "$(puppet config print ssldir)")
-
-find "$(puppet config print ssldir)" -name "$(puppet config print certname).pem" -delete
-```
-
-Once the expiration has been checked, the CA can be regenerated.
-
-```bash
-bolt plan run ca_extend::extend_ca_cert --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
+bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
 ```
 
 Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.

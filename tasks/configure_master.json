@@ -4,6 +4,10 @@
     "new_cert": {
       "description": "Location of the newly generated CA certificate",
       "type": "String"
+    },
+    "regen_primary_cert": {
+      "description": "Flag to regerate the primary server's certificate.  Set to true to perform the regeneration",
+      "type": "Boolean"
     }
   },
 

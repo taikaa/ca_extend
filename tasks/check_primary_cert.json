@@ -1,0 +1,8 @@
+{
+  "description": "Check the expiration date of the primary server cert",
+  "parameters": {},
+
+  "implementations": [
+    {"name": "check_primary_cert.sh", "requirements": ["shell"], "files": ["ca_extend/files/common.sh"], "input_method": "environment"}
+  ]
+}
