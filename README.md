@@ -220,3 +220,10 @@ We want to keep it as easy as possible to contribute changes so that our modules
 There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
+
+## How to Report an issue or contribute to the module
+
+If you are a PE user and need support using this module or are encountering issues, our Support team would be happy to help you resolve your issue and help reproduce any bugs. Just raise a ticket on the [support portal](https://support.puppet.com/hc/en-us/requests/new).
+
+If you have a reproducible bug or are a community user you can raise it directly on the Github issues page of the module <link>. We also welcome PR contributions to improve the module. Please see further details about contributing [here]
+(https://puppet.com/docs/puppet/7.5/contributing.html#contributing_changes_to_module_repositories)
