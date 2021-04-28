@@ -7,7 +7,7 @@
 1. [Setup - The basics of getting started with this module](#setup)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing](#reference)
-1. [Development - Guide for contributing to the module](#development)
+1. [Development - Guide for contributing to the module](#How-to-Report-an-issue-or-contribute-to-the-module)
 
 ## Overview
 
@@ -212,11 +212,8 @@ Since Puppet's services (and other services that use Puppet's PKI) validate cert
 it's possible to issue a new self-signed CA certificate based on a prior keypair without invalidating any certificates issued by the old CA.
 Once you've done that, it's just a matter of delivering the new CA certificate to every participant in the PKI.
 
-## Development
+## How to Report an issue or contribute to the module
 
-Puppet Labs modules on the Puppet Forge are open source projects, and community contributions are essential for keeping them great.
-We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
-We want to keep it as easy as possible to contribute changes so that our modules work in your environment.
-There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+If you are a PE user and need support using this module or are encountering issues, our Support team would be happy to help you resolve your issue and help reproduce any bugs. Just raise a ticket on the [support portal](https://support.puppet.com/hc/en-us/requests/new).
 
-For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
+If you have a reproducible bug or are a community user you can raise it directly on the Github issues page of the module [here.](https://github.com/puppetlabs/ca_extend/issues) We also welcome PR contributions to improve the module. Please see further details about contributing [here](https://puppet.com/docs/puppet/7.5/contributing.html#contributing_changes_to_module_repositories)
