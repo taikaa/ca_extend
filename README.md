@@ -217,7 +217,6 @@ Once you've done that, it's just a matter of delivering the new CA certificate t
 Puppet Labs modules on the Puppet Forge are open source projects, and community contributions are essential for keeping them great.
 We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment.
-There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 If you are a PE user and need support using this module or are encountering issues, our Support team would be happy to help you resolve your issue and help reproduce any bugs. Just raise a ticket on the [support portal](https://support.puppet.com/hc/en-us/requests/new).
 
