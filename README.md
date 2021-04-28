@@ -7,7 +7,7 @@
 1. [Setup - The basics of getting started with this module](#setup)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing](#reference)
-1. [Development - Guide for contributing to the module](#development)
+1. [Development - Guide for contributing to the module](#How-to-Report-an-issue-or-contribute-to-the-module)
 
 ## Overview
 
@@ -214,10 +214,6 @@ Once you've done that, it's just a matter of delivering the new CA certificate t
 
 ## How to Report an issue or contribute to the module
 
-Puppet Labs modules on the Puppet Forge are open source projects, and community contributions are essential for keeping them great.
-We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
-We want to keep it as easy as possible to contribute changes so that our modules work in your environment.
-
 If you are a PE user and need support using this module or are encountering issues, our Support team would be happy to help you resolve your issue and help reproduce any bugs. Just raise a ticket on the [support portal](https://support.puppet.com/hc/en-us/requests/new).
 
-If you have a reproducible bug or are a community user you can raise it directly on the Github issues page of the module [here]. https://github.com/puppetlabs/ca_extend/issues We also welcome PR contributions to improve the module. Please see further details about contributing [here](https://puppet.com/docs/puppet/7.5/contributing.html#contributing_changes_to_module_repositories)
+If you have a reproducible bug or are a community user you can raise it directly on the Github issues page of the module [here](https://github.com/puppetlabs/ca_extend/issues) We also welcome PR contributions to improve the module. Please see further details about contributing [here](https://puppet.com/docs/puppet/7.5/contributing.html#contributing_changes_to_module_repositories)
