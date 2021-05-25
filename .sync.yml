@@ -1,15 +1,21 @@
 ---
-mock_with: ':rspec'
+common:
 
 appveyor.yml:
   delete: true
 .gitlab-ci.yml:
   delete: true
-.project:
-  delete: true
-
+spec/spec_helper.rb:
+  mock_with: ":rspec"
+  coverage_report: true
+.github/workflows/auto_release.yml:
+  unmanaged: true
+.github/workflows/spec.yml:
+  checks: 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop'
+  unmanaged: true
+.github/workflows/release.yml:
+  unmanaged: true
 .travis.yml:
-  includes:
-    - env: PUPPET_GEM_VERSION="~> 7.0" CHECK=parallel_spec
-      rvm: 2.7.2
-      stage: spec
+  delete: true
+Rakefile:
+  changelog_user: "puppetlabs"
