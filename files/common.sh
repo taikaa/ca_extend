@@ -7,12 +7,12 @@ fail() {
   # Print a stderr: entry if there were anything printed to stderr
   if [[ -s $_tmp ]]; then
     # Hack to try and output valid json by replacing newlines with spaces.
-    echo "{ \"status\": \"error\", \"message\": \"$1\", \"stderr\": \"$(tr '\n' ' ' <$_tmp)\" }"
+    echo "{ \"status\": \"error\", \"message\": \"$1\", \"stderr\": \"$(tr '\n' ' ' <"$_tmp")\" }"
   else
     echo "{ \"status\": \"error\", \"message\": \"$1\" }"
   fi
 
-  exit ${2:-1}
+  exit "${2:-1}"
 }
 
 success() {
@@ -21,6 +21,7 @@ success() {
 }
 
 # Test for colors. If unavailable, unset variables are ok
+# shellcheck disable=SC2034
 if tput colors &>/dev/null; then
   green="$(tput setaf 2)"
   red="$(tput setaf 1)"
