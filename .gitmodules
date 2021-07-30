@@ -1,0 +1,3 @@
+[submodule ".github/workflows"]
+	path = .github/workflows
+	url = git@github.com:puppetlabs/support_workflows.git
