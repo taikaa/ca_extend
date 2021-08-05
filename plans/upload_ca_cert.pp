@@ -1,3 +1,8 @@
+# @summary
+#   A plan to upload a given CA certificate to a number of Puppet agent nodes
+# @param nodes The targets to upload the certificate to
+# @param cert The location of the CA certificate on disk of the local machine
+# @return JSON object with two keys: success and failure. Each key contains any number of objects consisting of the agent certname and the output of the upload_file command
 plan ca_extend::upload_ca_cert(
   TargetSpec $nodes,
   String     $cert
