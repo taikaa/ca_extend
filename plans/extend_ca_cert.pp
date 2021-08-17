@@ -1,3 +1,14 @@
+# @summary
+#   Plan that extends the Puppet CA certificate and configures the primary Puppet server
+#   and Compilers to use the extended certificate.
+# @param targets The target node on which to run the plan.  Should be the primary Puppet server
+# @param compile_masters Optional comma separated list of compilers to upload the certificate to
+# @param ssldir Location of the ssldir on disk
+# @param regen_primary_cert Whether to also regenerate the agent certificate of the primary Puppet server
+# @example Extend the CA cert and regenerate the primary agent cert locally on the primary Puppet server
+#   bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets local://$(hostname -f) --run-as root
+# @example Extend the CA cert by running the plan remotely
+#   bolt plan run ca_extend::extend_ca_cert --targets <primary_fqdn> --run-as root
 plan ca_extend::extend_ca_cert(
   TargetSpec $targets,
   Optional[TargetSpec] $compile_masters = undef,
