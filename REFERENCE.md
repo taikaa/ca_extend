@@ -9,7 +9,7 @@
 * [`check_agent_expiry`](#check_agent_expiry): Check the expiration date of all agent certificates
 * [`check_ca_expiry`](#check_ca_expiry): Check the expiration date of a CA certificate
 * [`check_primary_cert`](#check_primary_cert): Check the expiration date of the primary server cert
-* [`configure_master`](#configure_master): Backup ssldir and copy newly generated CA certificate
+* [`configure_primary`](#configure_primary): Backup ssldir and copy newly generated CA certificate
 * [`extend_ca_cert`](#extend_ca_cert): Extend CA certificate expiry date
 
 ### Plans
@@ -61,7 +61,7 @@ Check the expiration date of the primary server cert
 
 **Supports noop?** false
 
-### <a name="configure_master"></a>`configure_master`
+### <a name="configure_primary"></a>`configure_primary`
 
 Backup ssldir and copy newly generated CA certificate
 
@@ -113,7 +113,7 @@ bolt plan run ca_extend::extend_ca_cert --targets <primary_fqdn> --run-as root
 The following parameters are available in the `ca_extend::extend_ca_cert` plan:
 
 * [`targets`](#targets)
-* [`compile_masters`](#compile_masters)
+* [`compilers`](#compilers)
 * [`ssldir`](#ssldir)
 * [`regen_primary_cert`](#regen_primary_cert)
 
@@ -123,7 +123,7 @@ Data type: `TargetSpec`
 
 The target node on which to run the plan.  Should be the primary Puppet server
 
-##### <a name="compile_masters"></a>`compile_masters`
+##### <a name="compilers"></a>`compilers`
 
 Data type: `Optional[TargetSpec]`
 
