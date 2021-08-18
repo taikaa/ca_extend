@@ -156,7 +156,7 @@ See `REFERENCE.md` for an example.
 
 Note that you cannot use the Bolt `pcp` transport if your CA certificate has already expired, as the PXP-Agent service itself depends upon a valid CA certificate.
 
-### Usage
+## Usage
 
 First, check the expiration of the Puppet agent certificate by running the following command as root on the primary Puppet server:
 
@@ -168,7 +168,7 @@ If, and only if, the `notAfter` date printed has already passed, then the primar
 
 
 ```bash
-bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <master_fqdn> compile_masters=<comma_separated_compile_master_fqdns> --run-as root
+bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
 ```
 
 Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.
