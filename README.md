@@ -56,7 +56,7 @@ There are also two complementary tasks to check the expiration date of the CA ce
 
 ## Setup
 
-This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.2.0 on either on the primary Puppet server or a workstation with connectivity to the primary.
+This module requires [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.38.0 on either on the primary Puppet server or a workstation with connectivity to the primary.
 
 The installation procedure will differ depending on the version of Bolt.  If possible, using Bolt >= 3.0.0 is recommended.  For example, this will install the latest Bolt version on EL 7.
 
@@ -67,7 +67,7 @@ sudo yum install puppet-bolt
 
 The following two sections show how to install the module dependencies depending on the installed version of Bolt.
 
-### Bolt >= 1.2.0 < 3.0.0
+### Bolt >= 1.38.0 < 3.0.0
 
 The recommended procedure for these versions is to use a [Bolt Puppetfile](https://puppet.com/docs/bolt/latest/installing_tasks_from_the_forge.html#task-8928).
 From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directories.html#embedded-project-directory), specify this module and `puppetlabs-stdlib` as dependencies and run `bolt puppetfile install`.  For example:
@@ -131,7 +131,7 @@ See the "Usage" section for how to run the tasks and plans remotely or locally o
 
 ### Dependencies
 
-*  A [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.21.0
+*  A [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html) >= 1.38.0
 *  [puppetlabs-stdlib](https://puppet.com/docs/bolt/latest/bolt_installing.html)
 *  A `base64` binary on the primary Puppet server which supports the `-w` flag
 *  `bash` >= 4.0 on the primary Puppet server
