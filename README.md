@@ -158,6 +158,8 @@ Note that you cannot use the Bolt `pcp` transport if your CA certificate has alr
 
 ## Usage
 
+### ca_extend::extend_ca_cert Plan
+
 First, check the expiration of the Puppet agent certificate by running the following command as root on the primary Puppet server:
 
 ```
@@ -166,27 +168,59 @@ First, check the expiration of the Puppet agent certificate by running the follo
 
 If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated.  This can be accomplished by passing `regen_primary_cert=true` to the `ca_extend::extend_ca_cert` plan.
 
-
-```bash
+```
 bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
 ```
 
-Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://$(hostname -f)`, e.g.
+Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://hostname`, e.g.
 
 ```
-bolt plan run ca_extend::extend_ca_cert --targets local://$(hostname -f) --run-as root
+bolt plan run ca_extend::extend_ca_cert --targets local://hostname --run-as root
 ```
+
+### ca_extend::upload_ca_cert Plan
+
+You can use this plan with `cert` parameter to specify the location of the updated CA cert and distribute it to the nodes specified in the `targets` parameter
 
 ```bash
 bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
 ```
 
+### ca_extend::check_ca_expiry Task
+
+You can use this task to check the ca cert expiry on the `primary` mainly but you can also use it to check that a remote CA cert has been updated after using any means to update an expired CA cert on an agent.
+
 ```bash
 bolt task run ca_extend::check_ca_expiry --targets <TargetSpec>
 ```
 
+### ca_extend::check_agent_expiry Task
+
+You can use this task to categorize all PE certs in a PE environment as part of a valid or expiring section based on a customizable date in the future (default 3 months from now). This task runs against a `primary` server and checks all certs under `/etc/puppetlabs/puppet/ssl/ca/signed` as the single source of truth for the PE environment and splits the certs between a valid section or expiring section. 
+
 ```bash
-bolt task run ca_extend::check_agent_expiry --targets <TargetSpec>
+bolt task run ca_extend::check_agent_expiry --targets local://hostname
+```
+
+As such, the following output illustrates that all available certs in /etc/puppetlabs/puppet/ssl/ca/signed are valid and nothing is expiring in the next 3 months.
+
+```
+[root@pe-server-7a5b76-0 ca_extend]# bolt task run ca_extend::check_agent_expiry --targets local://hostname
+Started on local://pe-server-7a5b76-0.us-west1-c.internal...
+Finished on local://pe-server-7a5b76-0.us-west1-c.internal:
+  {
+    "valid": [
+      "/etc/puppetlabs/puppet/ssl/ca/signed/console-cert.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-node-7a5b76-0.us-west1-c.internal.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-server-7a5b76-0.us-west1-c.internal.pem",
+      "/etc/puppetlabs/puppet/ssl/ca/signed/win19-06d5fc-0.us-west1-c.internal.pem"
+    ],
+    "expiring": [
+  
+    ]
+  }
+Successful on 1 target: local://pe-server-7a5b76-0.us-west1-c.internal
+Ran on 1 target in 1.32 sec
 ```
 
 See `REFERENCE.md` for more detailed examples.
