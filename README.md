@@ -142,7 +142,6 @@ See the "Usage" section for how to run the tasks and plans remotely or locally o
 
 This module works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to allow for simultaneous uploads to \*nix and Windows agents.
 See the Bolt documentation for how to configure an inventory file.
-See the `REFERENCE.md` for a sample inventory file.
 
 Alternatively, you can use an `ssh` config file if you will only use that transport to upload the CA certificate to agents.
 Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`.
