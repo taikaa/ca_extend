@@ -28,7 +28,7 @@ This module can automate those tasks.
 This module is composed of Plans and Tasks to extend the expiration date of the CA certificate in Puppet Enterprise (and Puppet Open Source) and distribute that CA certificate to agents.
 
 Note that, with Puppet Open Source, if the CA certificate is only used by the Puppet CA and no other integrations, there is no further action to take after using the two Plans.
-However, if it is used for other integrations (such as SSL encrypted PuppetDB traffic) then those integrations will need to have their copy of the CA certificate updated. 
+However, if it is used for other integrations (such as SSL encrypted PuppetDB traffic) then those integrations will need to have their copy of the CA certificate updated.
 If the CA certificate is stored in any keystores, those will also need to be updated.
 
 The functionality of this module is composed into two Plans:
@@ -74,7 +74,7 @@ From within a [Boltdir](https://puppet.com/docs/bolt/latest/bolt_project_directo
 
 ```bash
 mkdir -p ~/Boltdir
-cd !$
+cd ~/Boltdir
 
 cat >>Puppetfile <<EOF
 mod 'puppetlabs-stdlib'
@@ -95,24 +95,26 @@ sudo yum install puppet-bolt
 ```
 
 If your primary Puppet server or workstation has internet access, the project can be initialized with the needed dependencies with the following:
+
 ```bash
 mkdir ca_extend
-cd !$
+cd ca_extend
 
 bolt project init expiry --modules puppetlabs-stdlib,puppetlabs-ca_extend
 ```
 
-Otherwise, if your primary Puppet server or workstation operates behind a proxy, initialize the project without the `--modules` option
+Otherwise, if your primary Puppet server or workstation operates behind a proxy, initialize the project without the `--modules` option:
+
 ```bash
 mkdir ca_extend
-cd !$
+cd ca_extend
 
 bolt project init expiry
 ```
 
 Then edit your `bolt-project.yaml` to use the proxy according to the [documentation](https://puppet.com/docs/bolt/latest/bolt_installing_modules.html#install-modules-using-a-proxy).  Next, add the module dependencies to `bolt-project.yaml`:
 
-```
+```yaml
 ---
 name: expiry
 modules:
@@ -161,19 +163,19 @@ Note that you cannot use the Bolt `pcp` transport if your CA certificate has alr
 
 First, check the expiration of the Puppet agent certificate by running the following command as root on the primary Puppet server:
 
-```
+```bash
 /opt/puppetlabs/puppet/bin/openssl x509 -in "$(/opt/puppetlabs/bin/puppet config print hostcert)" -enddate -noout
 ```
 
 If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated.  This can be accomplished by passing `regen_primary_cert=true` to the `ca_extend::extend_ca_cert` plan.
 
-```
+```bash
 bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
 ```
 
 Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://hostname`, e.g.
 
-```
+```bash
 bolt plan run ca_extend::extend_ca_cert --targets local://hostname --run-as root
 ```
 
@@ -195,15 +197,15 @@ bolt task run ca_extend::check_ca_expiry --targets <TargetSpec>
 
 ### ca_extend::check_agent_expiry Task
 
-You can use this task to categorize all PE certs in a PE environment as part of a valid or expiring section based on a customizable date in the future (default 3 months from now). This task runs against a `primary` server and checks all certs under `/etc/puppetlabs/puppet/ssl/ca/signed` as the single source of truth for the PE environment and splits the certs between a valid section or expiring section. 
+You can use this task to categorize all PE certs in a PE environment as part of a valid or expiring section based on a customizable date in the future (default 3 months from now). This task runs against a `primary` server and checks all certs under `/etc/puppetlabs/puppet/ssl/ca/signed` as the single source of truth for the PE environment and splits the certs between a valid section or expiring section.
 
 ```bash
 bolt task run ca_extend::check_agent_expiry --targets local://hostname
 ```
 
-As such, the following output illustrates that all available certs in /etc/puppetlabs/puppet/ssl/ca/signed are valid and nothing is expiring in the next 3 months.
+As such, the following output illustrates that all available certs in `/etc/puppetlabs/puppet/ssl/ca/signed` are valid and nothing is expiring in the next 3 months.
 
-```
+```bash
 [root@pe-server-7a5b76-0 ca_extend]# bolt task run ca_extend::check_agent_expiry --targets local://hostname
 Started on local://pe-server-7a5b76-0.us-west1-c.internal...
 Finished on local://pe-server-7a5b76-0.us-west1-c.internal:
@@ -215,7 +217,7 @@ Finished on local://pe-server-7a5b76-0.us-west1-c.internal:
       "/etc/puppetlabs/puppet/ssl/ca/signed/win19-06d5fc-0.us-west1-c.internal.pem"
     ],
     "expiring": [
-  
+
     ]
   }
 Successful on 1 target: local://pe-server-7a5b76-0.us-west1-c.internal
