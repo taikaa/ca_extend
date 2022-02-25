@@ -149,8 +149,31 @@ Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/confi
 
 #### PuppetDB
 
-A convenient way to specify targets for the `ca_extend::upload_ca_cert` plan is by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) can be used to specify targets.
-See `REFERENCE.md` for an example.
+A convenient way to specify targets for the `ca_extend::upload_ca_cert` plan is by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) can be used to specify targets as a command line option or the [PuppetDB plugin](https://puppet.com/docs/bolt/latest/supported_plugins.html#puppetdb) can be used to specify targets within inventory.yaml
+
+As a command line argument:
+
+```
+bolt plan run ca_extend::upload_ca_cert cert=$(puppet config print localcacert) --query "nodes[certname] {}"
+```
+
+Query PuppetDB within inventory.yaml:
+
+``` yaml
+groups:
+  - name: webservers
+    targets:
+      - _plugin: puppetdb
+        query: 'nodes[certname] { certname ~ "^web" }'
+        target_mapping:
+          uri: certname
+```
+
+```
+bolt plan run ca_extend::upload_ca_cert cert=$(puppet config print localcacert) --targets webservers
+```
+
+For example, to use certificate authentication for PuppetDB
 
 #### PCP
 
