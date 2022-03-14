@@ -36,14 +36,15 @@ The functionality of this module is composed into two Plans:
 *  `ca_extend::extend_ca_cert`
     * Extend the CA certificate and configure the primary Puppet server and any Compilers to use that extended certificate.
 *  `ca_extend::upload_ca_cert`
-    * Distribute the CA certificate to agents using any transport supported by Puppet Bolt, such as `ssh`, `winrm`, or `pcp`.
+    * Distribute the CA certificate to agents using transport supported by Puppet Bolt, such as `ssh` and `winrm`.
 
 Regardless of whether the CA certificate is expired, the `extend_ca_cert` plan may be used to extend its expiration date in-place and configure the primary Puppet server and any Compilers to use it.
 
-After the CA certificate has been extended, there are two methods for distributing it to agents.
+After the CA certificate has been extended, there are three methods for distributing it to agents:
 
-* Using the `ca_extend::upload_ca_cert` plan or another method to copy the CA certificate to agents.
-* Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run. The agent will download that file only if it is absent, so it must be deleted to use this method.
+1. Using the `ca_extend::upload_ca_cert` plan or another method to copy the CA certificate to agents.
+1. Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run. The agent will download that file only if it is absent, so it must be deleted to use this method.
+1. Using a Puppet file resource to manage `ca.pem`. _Note: This method is only possible if the CA certificate has not yet expired because Puppet communications depend upon a valid CA certificate._
 
 There are also two complementary tasks to check the expiration date of the CA certificate or any agent certificates.
 
@@ -138,28 +139,9 @@ See the "Usage" section for how to run the tasks and plans remotely or locally o
 *  A `base64` binary on the primary Puppet server which supports the `-w` flag
 *  `bash` >= 4.0 on the primary Puppet server
 
-### Configuration
-
-#### Inventory
-
-This module works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to allow for simultaneous uploads to \*nix and Windows agents.
-See the Bolt documentation for how to configure an inventory file.
-
-Alternatively, you can use an `ssh` config file if you will only use that transport to upload the CA certificate to agents.
-Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`.
-
-#### PuppetDB
-
-A convenient way to specify targets for the `ca_extend::upload_ca_cert` plan is by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) can be used to specify targets.
-See `REFERENCE.md` for an example.
-
-#### PCP
-
-Note that you cannot use the Bolt `pcp` transport if your CA certificate has already expired, as the PXP-Agent service itself depends upon a valid CA certificate.
-
 ## Usage
 
-### ca_extend::extend_ca_cert Plan
+### Extend the CA using the ca_extend::extend_ca_cert plan
 
 First, check the expiration of the Puppet agent certificate by running the following command as root on the primary Puppet server:
 
@@ -179,12 +161,48 @@ Note that if you are running `extend_ca_cert` locally on the primary Puppet serv
 bolt plan run ca_extend::extend_ca_cert --targets local://hostname --run-as root
 ```
 
-### ca_extend::upload_ca_cert Plan
+### Distribute `ca.pem` to agents 
 
-You can use this plan with `cert` parameter to specify the location of the updated CA cert and distribute it to the nodes specified in the `targets` parameter
+Next, distribute `ca.pem` to agents using one of the three methods:
+
+#### 1. Using the ca_extend::upload_ca_cert Plan
+
+You can use this plan with `cert` parameter to specify the location of the updated CA cert and distribute it to the nodes specified in the `targets` parameter. The `ca_extend::upload_ca_cert` plan works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to specify targets; this allows for simultaneous uploads to \*nix and Windows agents. See the Bolt documentation for how to configure an inventory file. Alternatively, you may specify targets for the `ca_extend::upload_ca_cert` plan by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which the [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) option can be used. Lastly, you may instead use an `ssh` config file if you will only use `ssh` transport to upload the CA certificate to agents. Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`.
 
 ```bash
 bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
+```
+
+#### 2. Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run
+
+The agent will download `ca.pem` only if it is absent, so it must be deleted to use this method. 
+
+For example, on an \*nix agent node delete `ca.pem` by running:
+
+```bash
+rm $(puppet config print localcacert)
+```
+
+Next, run puppet so the agent will retreive `ca.pem`:
+
+```bash
+puppet agent -t
+```
+
+#### 3. Using a Puppet file resource to manage `ca.pem`
+
+
+This example manages `ca.pem` on Windows and \*nix nodes with the contents of `ca.pem` on the puppetserver. _Note: This method is only possible if the CA certificate has not yet expired because Puppet communications depend upon a valid CA certificate._
+
+```
+  $localcacert = $facts['os']['family'] ? {
+    'windows' => 'C:\ProgramData\PuppetLabs\puppet\etc\ssl\certs\ca.pem',
+    default   => '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
+  }
+  file {$localcacert:
+    ensure  => file,
+    content => file($settings::localcacert),
+  }
 ```
 
 ### ca_extend::check_ca_expiry Task
