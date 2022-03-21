@@ -30,7 +30,7 @@ plan ca_extend::extend_ca_cert(
     fail_plan("Puppet not detected on ${targets}")
   }
 
-  if $is_pe and ! $regen_primary_cert{
+  if $is_pe and ! $regen_primary_cert {
     $out = run_task('ca_extend::check_primary_cert', $targets, '_catch_errors' => true).first
     unless $out.ok {
       fail_plan($out.value['message'])
