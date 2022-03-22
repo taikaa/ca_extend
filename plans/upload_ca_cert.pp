@@ -13,7 +13,7 @@ plan ca_extend::upload_ca_cert(
 
   # Extract the ResultSet from an error object
   case $tmp {
-    Error['bolt/run-failure']: {
+    'Error'['bolt/run-failure']: {
       $results = $tmp.details['result_set']
       $not_ok = $results.error_set
     }
