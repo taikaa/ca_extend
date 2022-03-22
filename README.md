@@ -167,16 +167,18 @@ Next, distribute `ca.pem` to agents using one of the three methods:
 
 #### 1. Using the ca_extend::upload_ca_cert Plan
 
-Use this plan with the `cert` parameter to specify the location of the updated CA cert on the primary server. For example, you may use `cert=$(puppet config print localcacert)`. Distribute the CA certificate to agent nodes specified in the `targets` parameter. The `ca_extend::upload_ca_cert` plan works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to specify targets; this allows for simultaneous uploads to \*nix and Windows agents. See the Bolt documentation for how to configure an inventory file. Alternatively, you may instead use an `ssh` config file if you will only use `ssh` transport to upload the CA certificate to targets. Bolt defaults to using the `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`.
+Using the `ca_extend::upload_ca_cert` plan relies on using `ssh` and/or `winrm` transport methods. Use the `cert` parameter to specify the location of the updated CA cert on the primary server. For example, you may use `cert=$(puppet config print localcacert)`. Distribute the CA certificate to agent nodes specified in the `targets` parameter. Bolt defaults to using `ssh` transport, which in turn will use `~/.ssh/config` for options such as `username` and `private-key`. However, the `ca_extend::upload_ca_cert` plan works best with a Bolt [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) to specify `targets`; this allows for simultaneous uploads to \*nix and Windows agents. See the Bolt documentation for more information on configuring an inventory file and the `targets` parameter.
 
 ```bash
 bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
 ```
 
-Lastly, you may specify targets for the `ca_extend::upload_ca_cert` plan by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which the [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) option can be used. 
+As an alternative to using the `targets` parameter, you may specify targets for the `ca_extend::upload_ca_cert` plan by connecting Bolt to [PuppetDB](https://puppet.com/docs/bolt/latest/bolt_connect_puppetdb.html), after which the [--query](https://puppet.com/docs/bolt/latest/bolt_command_reference.html#command-options) parameter can be used. 
+
+Example query for all agent nodes excluding puppetserver nodes because the `ca_extend::extend_ca_cert` plan already updates the primary's and compilers' copies of the CA certificate:
 
 ```bash
-bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --targets <TargetSpec>
+bolt plan run ca_extend::upload_ca_cert cert=<path_to_cert> --query "nodes[certname]{! certname in ['primaryfqdn', 'compiler1fqdn', 'compiler2fqdn']}"
 ```
 
 #### 2. Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run
