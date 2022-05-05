@@ -237,15 +237,21 @@ Started on local://pe-server-7a5b76-0.us-west1-c.internal...
 Finished on local://pe-server-7a5b76-0.us-west1-c.internal:
   {
     "valid": [
-      "/etc/puppetlabs/puppet/ssl/ca/signed/console-cert.pem",
-      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-node-7a5b76-0.us-west1-c.internal.pem",
-      "/etc/puppetlabs/puppet/ssl/ca/signed/pe-server-7a5b76-0.us-west1-c.internal.pem",
-      "/etc/puppetlabs/puppet/ssl/ca/signed/win19-06d5fc-0.us-west1-c.internal.pem"
+      {
+        "console-cert.pem": "Jan 14 19:55:34 2024 GMT"
+      },
+      {
+        "critical-boom.delivery.puppetlabs.net.pem": "Apr 21 17:57:20 2027 GMT"
+      },
+      {
+        "irate-maple.delivery.puppetlabs.net.pem": "Apr 21 19:25:35 2027 GMT"
+      }
     ],
-    "expiring": [
+    "expired": [
 
     ]
   }
+
 Successful on 1 target: local://pe-server-7a5b76-0.us-west1-c.internal
 Ran on 1 target in 1.32 sec
 ```
