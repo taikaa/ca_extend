@@ -28,7 +28,8 @@ for f in "$($PUPPET_BIN/puppet config print signeddir)"/*; do
   expiry_date="$(${openssl} x509 -enddate -noout -in "${f}")"
   expiry_date="${expiry_date#*=}"
   expiry_seconds="$(date --date="$expiry_date" +"%s")" || fail "Error calculating expiry date from enddate"
-
+  f="$f: $expiry_date"
+  
   if (( to_date >= expiry_seconds )); then
     expired+=("\"$f\"")
   else
