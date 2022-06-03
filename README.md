@@ -197,6 +197,8 @@ Next, run puppet so the agent will retreive `ca.pem`:
 puppet agent -t
 ```
 
+**Note:** If you are depending on agent nodes downloading `ca.pem` during a scheduled Puppet run rather than manually initiating a Puppet run with `puppet agent -t`, you may need to restart the `puppet` service on \*nix nodes. This is because the Puppet agent daemon on \*nix nodes could have previous CA content loaded into memory. 
+
 #### 3. Using a Puppet file resource to manage `ca.pem`
 
 
