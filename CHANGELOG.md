@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.2.0](https://github.com/puppetlabs/ca_extend/tree/v3.2.0) (2022-06-29)
+
+[Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.1.0...v3.2.0)
+
+### Added
+
+- \(SUP-3016\) Ensure valid json formatting [\#64](https://github.com/puppetlabs/ca_extend/pull/64) ([m0dular](https://github.com/m0dular))
+- \(SUP-3016\) Add printing dates to agent expiry task [\#63](https://github.com/puppetlabs/ca_extend/pull/63) ([elainemccloskey](https://github.com/elainemccloskey))
+
+### Fixed
+
+- \(SUP-3433\) Incorrect Error handling ref for upload\_ca\_cert.pp  [\#67](https://github.com/puppetlabs/ca_extend/pull/67) ([MartyEwings](https://github.com/MartyEwings))
+
 ## [v3.1.0](https://github.com/puppetlabs/ca_extend/tree/v3.1.0) (2022-03-28)
 
 [Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.0.0...v3.1.0)
