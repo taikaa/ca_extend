@@ -217,7 +217,7 @@ This example manages `ca.pem` on Windows and \*nix nodes with the contents of `c
 
 ### ca_extend::check_ca_expiry Task
 
-You can use this task to check the ca cert expiry on the `primary` mainly but you can also use it to check that a remote CA cert has been updated after using any means to update an expired CA cert on an agent.
+You can use this task to check the CA cert expiry on the `primary` mainly but you can also use it to check that a remote \*nix node's CA cert has been updated after using any means to distribute the new CA certificate.
 
 ```bash
 bolt task run ca_extend::check_ca_expiry --targets <TargetSpec>
