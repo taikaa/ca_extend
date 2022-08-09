@@ -72,6 +72,7 @@ EOT
 new_ca_cert="${ca_dir}/ca_crt-expires-${end_date}.pem"
 
 yes | "${PUPPET_BIN}/openssl" ca \
+  -notext \
   -in "${workdir}/ca_csr.pem" \
   -keyfile "${ca_key}" \
   -config "${workdir}/openssl.cnf" \
