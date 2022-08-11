@@ -46,13 +46,17 @@ After the CA certificate has been extended, there are three methods for distribu
 1. Manually deleting `ca.pem` on agents and letting them download that file as part of the next Puppet agent run. The agent will download that file only if it is absent, so it must be deleted to use this method.
 1. Using a Puppet file resource to manage `ca.pem`. _Note: This method is only possible if the CA certificate has not yet expired because Puppet communications depend upon a valid CA certificate._
 
-There are also two complementary tasks to check the expiration date of the CA certificate or any agent certificates.
+There are also complementary tasks to check the expiration date of the CA certificate, agent certificates, and the CA CRL.
 
 * `ca_extend::check_ca_expiry`
     * Checks if the CA certificate expires by a certain date. Defaults to three months from today.
 * `ca_extend::check_agent_expiry`
     * Checks if any agent certificate expires by a certain date. Defaults to three months from today.
-
+*  `ca_extend::check_crl_expiry`
+    * Checks if the CA crl on the primary server has expired
+*  `ca_extend::crl_truncate`
+    * Will truncate and regenerate the CA CRL, this should only be run if the CRL is expired
+  
 ** If the CA certificate is expiring or expired, you must extend it as soon as possible. **
 
 ## Setup
@@ -150,6 +154,8 @@ First, check the expiration of the Puppet agent certificate by running the follo
 ```
 
 If, and only if, the `notAfter` date printed has already passed, then the primary Puppet server certificate has expired and must be cleaned up before the CA can be regenerated.  This can be accomplished by passing `regen_primary_cert=true` to the `ca_extend::extend_ca_cert` plan.
+
+> Note: This plan will also run the `ca_extend::check_crl_cert` task and if the crl is expired, will automatically resolve the issue by running the `ca_extend::crl_truncate` task.
 
 ```bash
 bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
