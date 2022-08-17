@@ -202,7 +202,7 @@ puppet agent -t
 #### 3. Using a Puppet file resource to manage `ca.pem`
 
 
-This example manages `ca.pem` on Windows and \*nix nodes with the contents of `ca.pem` on the puppetserver. _Note: This method is only possible if the CA certificate has not yet expired because Puppet communications depend upon a valid CA certificate._
+You may add this code to the catalog received by your agent nodes; the code manages `ca.pem` on Windows and \*nix nodes with the contents of `ca.pem` on the compiling server (primary server or compiler). The code will not work with a serverless approach such as `puppet apply`. _Note: This method is only possible if the CA certificate has not yet expired because Puppet communications depend upon a valid CA certificate._
 
 ```
   $localcacert = $facts['os']['family'] ? {
