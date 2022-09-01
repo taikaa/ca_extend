@@ -40,6 +40,14 @@ plan ca_extend::extend_ca_cert(
     }
   }
 
+  if $is_pe {
+    $crl_results = run_task('ca_extend::check_crl_cert', $targets)
+    if $crl_results.value['status'] == 'expired' {
+      out::message('INFO: CRL expired, truncating to regenerate')
+      $truncate_results = run_task('ca_extend::crl_truncate', $targets)
+    }
+  }
+
   out::message("INFO: Stopping Puppet services on ${targets}")
   $services.each |$service| {
     run_task('service::linux', $targets, 'action' => 'stop', 'name' => $service)

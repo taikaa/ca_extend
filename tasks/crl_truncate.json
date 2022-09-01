@@ -1,0 +1,28 @@
+{
+  "description": "Truncate the CRL issued by the Puppet CA",
+  "parameters": {
+    "ssldir": {
+      "description": "The location of the Puppet ssl dir",
+      "type": "Optional[String[1]]"
+    },
+    "crl_expiration_days": {
+      "description": "The number of days until the new CRL expires.  Defaults to 15 years (5475 days)",
+      "type": "Integer[1]",
+      "default": 5475
+    },
+    "run_puppet_agent": {
+      "description": "Whether to run the Puppet agent after creating the CRL.  Defaults to true",
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "implementations": [
+    {
+      "name": "crl_truncate.sh",
+      "requirements": [
+        "shell"
+      ],
+      "input_method": "environment"
+    }
+  ]
+}

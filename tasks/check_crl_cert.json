@@ -1,0 +1,16 @@
+{
+    "description": "Check the expiration date of the primary server crl",
+    "parameters": {},
+    "implementations": [
+        {
+            "name": "check_crl_cert.sh",
+            "requirements": [
+                "shell"
+            ],
+            "files": [
+                "ca_extend/files/common.sh"
+            ],
+            "input_method": "environment"
+        }
+    ]
+}
