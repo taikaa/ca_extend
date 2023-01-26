@@ -8,16 +8,18 @@
 
 * [`check_agent_expiry`](#check_agent_expiry): Check the expiration date of all agent certificates
 * [`check_ca_expiry`](#check_ca_expiry): Check the expiration date of a CA certificate
+* [`check_crl_cert`](#check_crl_cert): Check the expiration date of the primary server crl
 * [`check_primary_cert`](#check_primary_cert): Check the expiration date of the primary server cert
 * [`configure_primary`](#configure_primary): Backup ssldir and copy newly generated CA certificate
+* [`crl_truncate`](#crl_truncate): Truncate the CRL issued by the Puppet CA
 * [`extend_ca_cert`](#extend_ca_cert): Extend CA certificate expiry date
 
 ### Plans
 
-* [`ca_extend::extend_ca_cert`](#ca_extendextend_ca_cert): Plan that extends the Puppet CA certificate and configures the primary Puppet server
+* [`ca_extend::extend_ca_cert`](#ca_extend--extend_ca_cert): Plan that extends the Puppet CA certificate and configures the primary Puppet server
 and Compilers to use the extended certificate.
-* [`ca_extend::get_agent_facts`](#ca_extendget_agent_facts): A plan to work around BOLT-1168 so that one agent failing in apply_prep won't cause the whole plan to fail.
-* [`ca_extend::upload_ca_cert`](#ca_extendupload_ca_cert): A plan to upload a given CA certificate to a number of Puppet agent nodes
+* [`ca_extend::get_agent_facts`](#ca_extend--get_agent_facts): A plan to work around BOLT-1168 so that one agent failing in apply_prep won't cause the whole plan to fail.
+* [`ca_extend::upload_ca_cert`](#ca_extend--upload_ca_cert): A plan to upload a given CA certificate to a number of Puppet agent nodes
 
 ## Tasks
 
@@ -55,6 +57,12 @@ Data type: `Optional[String[1]]`
 
 YYYY-MM-DD date to test whether the certificate will expire by. Defaults to three months from today
 
+### <a name="check_crl_cert"></a>`check_crl_cert`
+
+Check the expiration date of the primary server crl
+
+**Supports noop?** false
+
 ### <a name="check_primary_cert"></a>`check_primary_cert`
 
 Check the expiration date of the primary server cert
@@ -81,6 +89,32 @@ Data type: `Boolean`
 
 Flag to regerate the primary server's certificate.  Set to true to perform the regeneration
 
+### <a name="crl_truncate"></a>`crl_truncate`
+
+Truncate the CRL issued by the Puppet CA
+
+**Supports noop?** false
+
+#### Parameters
+
+##### `ssldir`
+
+Data type: `Optional[String[1]]`
+
+The location of the Puppet ssl dir
+
+##### `crl_expiration_days`
+
+Data type: `Integer[1]`
+
+The number of days until the new CRL expires.  Defaults to 15 years (5475 days)
+
+##### `run_puppet_agent`
+
+Data type: `Boolean`
+
+Whether to run the Puppet agent after creating the CRL.  Defaults to true
+
 ### <a name="extend_ca_cert"></a>`extend_ca_cert`
 
 Extend CA certificate expiry date
@@ -89,7 +123,7 @@ Extend CA certificate expiry date
 
 ## Plans
 
-### <a name="ca_extendextend_ca_cert"></a>`ca_extend::extend_ca_cert`
+### <a name="ca_extend--extend_ca_cert"></a>`ca_extend::extend_ca_cert`
 
 Plan that extends the Puppet CA certificate and configures the primary Puppet server
 and Compilers to use the extended certificate.
@@ -112,26 +146,26 @@ bolt plan run ca_extend::extend_ca_cert --targets <primary_fqdn> --run-as root
 
 The following parameters are available in the `ca_extend::extend_ca_cert` plan:
 
-* [`targets`](#targets)
-* [`compilers`](#compilers)
-* [`ssldir`](#ssldir)
-* [`regen_primary_cert`](#regen_primary_cert)
+* [`targets`](#-ca_extend--extend_ca_cert--targets)
+* [`compilers`](#-ca_extend--extend_ca_cert--compilers)
+* [`ssldir`](#-ca_extend--extend_ca_cert--ssldir)
+* [`regen_primary_cert`](#-ca_extend--extend_ca_cert--regen_primary_cert)
 
-##### <a name="targets"></a>`targets`
+##### <a name="-ca_extend--extend_ca_cert--targets"></a>`targets`
 
 Data type: `TargetSpec`
 
 The target node on which to run the plan.  Should be the primary Puppet server
 
-##### <a name="compilers"></a>`compilers`
+##### <a name="-ca_extend--extend_ca_cert--compilers"></a>`compilers`
 
 Data type: `Optional[TargetSpec]`
 
 Optional comma separated list of compilers to upload the certificate to
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="ssldir"></a>`ssldir`
+##### <a name="-ca_extend--extend_ca_cert--ssldir"></a>`ssldir`
 
 Data type: `Any`
 
@@ -139,15 +173,15 @@ Location of the ssldir on disk
 
 Default value: `'/etc/puppetlabs/puppet/ssl'`
 
-##### <a name="regen_primary_cert"></a>`regen_primary_cert`
+##### <a name="-ca_extend--extend_ca_cert--regen_primary_cert"></a>`regen_primary_cert`
 
 Data type: `Any`
 
 Whether to also regenerate the agent certificate of the primary Puppet server
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="ca_extendget_agent_facts"></a>`ca_extend::get_agent_facts`
+### <a name="ca_extend--get_agent_facts"></a>`ca_extend::get_agent_facts`
 
 A plan to work around BOLT-1168 so that one agent failing in apply_prep won't cause the whole plan to fail.
 
@@ -155,15 +189,15 @@ A plan to work around BOLT-1168 so that one agent failing in apply_prep won't ca
 
 The following parameters are available in the `ca_extend::get_agent_facts` plan:
 
-* [`nodes`](#nodes)
+* [`nodes`](#-ca_extend--get_agent_facts--nodes)
 
-##### <a name="nodes"></a>`nodes`
+##### <a name="-ca_extend--get_agent_facts--nodes"></a>`nodes`
 
 Data type: `TargetSpec`
 
 The targets to run apply_prep on
 
-### <a name="ca_extendupload_ca_cert"></a>`ca_extend::upload_ca_cert`
+### <a name="ca_extend--upload_ca_cert"></a>`ca_extend::upload_ca_cert`
 
 A plan to upload a given CA certificate to a number of Puppet agent nodes
 
@@ -171,16 +205,16 @@ A plan to upload a given CA certificate to a number of Puppet agent nodes
 
 The following parameters are available in the `ca_extend::upload_ca_cert` plan:
 
-* [`nodes`](#nodes)
-* [`cert`](#cert)
+* [`nodes`](#-ca_extend--upload_ca_cert--nodes)
+* [`cert`](#-ca_extend--upload_ca_cert--cert)
 
-##### <a name="nodes"></a>`nodes`
+##### <a name="-ca_extend--upload_ca_cert--nodes"></a>`nodes`
 
 Data type: `TargetSpec`
 
 The targets to upload the certificate to
 
-##### <a name="cert"></a>`cert`
+##### <a name="-ca_extend--upload_ca_cert--cert"></a>`cert`
 
 Data type: `String`
 
