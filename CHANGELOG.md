@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.3.0](https://github.com/puppetlabs/ca_extend/tree/v3.3.0) (2023-01-26)
+
+[Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.2.0...v3.3.0)
+
+### Changed
+
+- Remove harmful terms from ca\_extend [\#40](https://github.com/puppetlabs/ca_extend/pull/40) ([gavindidrichsen](https://github.com/gavindidrichsen))
+
+### Added
+
+- \(SUP-3365\) Add crl\_truncate  [\#72](https://github.com/puppetlabs/ca_extend/pull/72) ([elainemccloskey](https://github.com/elainemccloskey))
+
+### Fixed
+
+- \(SUP-3048\) Do not print cert contents [\#71](https://github.com/puppetlabs/ca_extend/pull/71) ([m0dular](https://github.com/m0dular))
+
 ## [v3.2.0](https://github.com/puppetlabs/ca_extend/tree/v3.2.0) (2022-06-29)
 
 [Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.1.0...v3.2.0)
@@ -33,7 +49,6 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Changed
 
-- Remove harmful terms from ca\_extend [\#40](https://github.com/puppetlabs/ca_extend/pull/40) ([gavindidrichsen](https://github.com/gavindidrichsen))
 - \(SUP-2497\) Remove EOL platforms and versions [\#39](https://github.com/puppetlabs/ca_extend/pull/39) ([m0dular](https://github.com/m0dular))
 
 ## [v2.1.0](https://github.com/puppetlabs/ca_extend/tree/v2.1.0) (2021-08-02)
