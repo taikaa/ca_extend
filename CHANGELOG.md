@@ -2,13 +2,17 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.3.1](https://github.com/puppetlabs/ca_extend/tree/v3.3.1) (2023-01-26)
+
+[Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.3.0...v3.3.1)
+
+### Fixed
+
+- \(SUP-3365\) Fix lookup of crl\_results [\#77](https://github.com/puppetlabs/ca_extend/pull/77) ([m0dular](https://github.com/m0dular))
+
 ## [v3.3.0](https://github.com/puppetlabs/ca_extend/tree/v3.3.0) (2023-01-26)
 
 [Full Changelog](https://github.com/puppetlabs/ca_extend/compare/v3.2.0...v3.3.0)
-
-### Changed
-
-- Remove harmful terms from ca\_extend [\#40](https://github.com/puppetlabs/ca_extend/pull/40) ([gavindidrichsen](https://github.com/gavindidrichsen))
 
 ### Added
 
@@ -26,10 +30,6 @@ All notable changes to this project will be documented in this file. The format 
 
 - \(SUP-3016\) Ensure valid json formatting [\#64](https://github.com/puppetlabs/ca_extend/pull/64) ([m0dular](https://github.com/m0dular))
 - \(SUP-3016\) Add printing dates to agent expiry task [\#63](https://github.com/puppetlabs/ca_extend/pull/63) ([elainemccloskey](https://github.com/elainemccloskey))
-
-### Fixed
-
-- \(SUP-3433\) Incorrect Error handling ref for upload\_ca\_cert.pp  [\#67](https://github.com/puppetlabs/ca_extend/pull/67) ([MartyEwings](https://github.com/MartyEwings))
 
 ## [v3.1.0](https://github.com/puppetlabs/ca_extend/tree/v3.1.0) (2022-03-28)
 
@@ -49,7 +49,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Changed
 
+- Remove harmful terms from ca\_extend [\#40](https://github.com/puppetlabs/ca_extend/pull/40) ([gavindidrichsen](https://github.com/gavindidrichsen))
 - \(SUP-2497\) Remove EOL platforms and versions [\#39](https://github.com/puppetlabs/ca_extend/pull/39) ([m0dular](https://github.com/m0dular))
+
+### Fixed
+
+- \(SUP-3433\) Incorrect Error handling ref for upload\_ca\_cert.pp  [\#67](https://github.com/puppetlabs/ca_extend/pull/67) ([MartyEwings](https://github.com/MartyEwings))
 
 ## [v2.1.0](https://github.com/puppetlabs/ca_extend/tree/v2.1.0) (2021-08-02)
 
