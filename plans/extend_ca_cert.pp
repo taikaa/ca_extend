@@ -85,9 +85,9 @@ plan ca_extend::extend_ca_cert(
     out::message("INFO: Configuring the replica (${replica}) to use the extended CA certificate")
     upload_file($tmp_file, '/etc/puppetlabs/puppet/ssl/certs/ca.pem', $replica)
     run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $replica)
-    run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $targets)
+    #run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $targets)
     run_command('/bin/systemctl start pe-* puppet pxp-agent', $replica)
-    run_command('/bin/systemctl start puppet', $targets)
+    #run_command('/bin/systemctl start puppet', $targets)
   }
 
   if $compilers {
