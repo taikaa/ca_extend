@@ -1,8 +1,9 @@
 # @summary
-#   Plan that extends the Puppet CA certificate and configures the primary Puppet server
+#   Plan that extends the Puppet CA certificate and configures the primary Puppet server, Replica
 #   and Compilers to use the extended certificate.
-# @param targets The target node on which to run the plan.  Should be the primary Puppet server
-# @param compilers Optional comma separated list of compilers to upload the certificate to
+# @param targets The target node on which to run the plan. Should be the primary Puppet server
+# @param compilers Optional comma separated list of compilers to configure to use the extended CA
+# @param replica Optional replica to configure to use the extended CA 
 # @param ssldir Location of the ssldir on disk
 # @param regen_primary_cert Whether to also regenerate the agent certificate of the primary Puppet server
 # @example Extend the CA cert and regenerate the primary agent cert locally on the primary Puppet server
@@ -21,11 +22,9 @@ plan ca_extend::extend_ca_cert(
 
   if $primary_facts['pe_build'] {
     $is_pe = true
-    $services = ['puppet', 'pe-puppetserver', 'pe-postgresql']
   }
   elsif $primary_facts['puppetversion'] {
     $is_pe = false
-    $services = ['puppet', 'puppetserver']
   }
   else {
     fail_plan("Puppet not detected on ${targets}")
