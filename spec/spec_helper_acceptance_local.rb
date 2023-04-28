@@ -8,15 +8,3 @@ class LitmusHelper
   include Singleton
   include PuppetLitmus
 end
-
-RSpec.configure do |c|
-  c.before :suite do
-    LitmusHelper.instance.run_shell('/opt/puppetlabs/bin/puppet plugin download')
-    pp = <<-MANIFEST
-      package { 'cron':
-        ensure => 'latest',
-      }
-    MANIFEST
-    LitmusHelper.instance.apply_manifest(pp)
-  end
-end
