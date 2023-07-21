@@ -2,7 +2,8 @@
 #   Plan that extends the Puppet CA certificate and configures the primary Puppet server
 #   and Compilers to use the extended certificate.
 # @param targets The target node on which to run the plan.  Should be the primary Puppet server
-# @param compilers Optional comma separated list of compilers to upload the certificate to
+# @param compilers Optional comma separated list of compilers to configure to use the extended CA
+# @param replica Optional replica to configure to use the extended CA 
 # @param ssldir Location of the ssldir on disk
 # @param regen_primary_cert Whether to also regenerate the agent certificate of the primary Puppet server
 # @example Extend the CA cert and regenerate the primary agent cert locally on the primary Puppet server
@@ -12,6 +13,7 @@
 plan ca_extend::extend_ca_cert(
   TargetSpec $targets,
   Optional[TargetSpec] $compilers = undef,
+  Optional[TargetSpec] $replica = undef,
   $ssldir                               = '/etc/puppetlabs/puppet/ssl',
   $regen_primary_cert                   = false,
 ) {
@@ -74,6 +76,19 @@ plan ca_extend::extend_ca_cert(
   $tmp = run_command('mktemp', 'localhost', '_run_as' => system::env('USER'))
   $tmp_file = $tmp.first.value['stdout'].chomp
   file::write($tmp_file, $cert_contents)
+
+  run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $targets)
+
+  if $is_pe and $replica {
+    out::message("INFO: Stopping Puppet services on ${replica}")
+    $services.each |$service| {
+      run_task('service::linux', $replica, 'action' => 'stop', 'name' => $service)
+    }
+    out::message("INFO: Configuring the replica (${replica}) to use the extended CA certificate")
+    upload_file($tmp_file, '/etc/puppetlabs/puppet/ssl/certs/ca.pem', $replica)
+    run_command('/opt/puppetlabs/bin/puppet agent --no-daemonize --no-noop --onetime', $replica)
+    run_task('service::linux', $replica, 'action' => 'start', 'name' => 'puppet')
+  }
 
   if $compilers {
     out::message("INFO: Stopping Puppet services on compilers (${compilers})")
