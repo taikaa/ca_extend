@@ -34,7 +34,7 @@ If the CA certificate is stored in any keystores, those will also need to be upd
 The functionality of this module is composed into two Plans:
 
 *  `ca_extend::extend_ca_cert`
-    * Extend the CA certificate and configure the primary Puppet server and any Replica and Compilers to use that extended certificate.
+    * Extend the CA certificate and configure the primary Puppet server, Replica, Compilers, and Postgres nodes to use that extended certificate.
 *  `ca_extend::upload_ca_cert`
     * Distribute the CA certificate to agents using transport supported by Puppet Bolt, such as `ssh` and `winrm`.
 
