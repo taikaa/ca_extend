@@ -34,7 +34,7 @@ If the CA certificate is stored in any keystores, those will also need to be upd
 The functionality of this module is composed into two Plans:
 
 *  `ca_extend::extend_ca_cert`
-    * Extend the CA certificate and configure the primary Puppet server and any Compilers to use that extended certificate.
+    * Extend the CA certificate and configure the primary Puppet server, Replica, Compilers, and Postgres nodes to use that extended certificate.
 *  `ca_extend::upload_ca_cert`
     * Distribute the CA certificate to agents using transport supported by Puppet Bolt, such as `ssh` and `winrm`.
 
@@ -158,7 +158,7 @@ If, and only if, the `notAfter` date printed has already passed, then the primar
 > Note: This plan will also run the `ca_extend::check_crl_cert` task and if the crl is expired, will automatically resolve the issue by running the `ca_extend::crl_truncate` task.
 
 ```bash
-bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
+bolt plan run ca_extend::extend_ca_cert regen_primary_cert=true --targets <primary_fqdn> replica=<replica_fqdn> compilers=<comma_separated_compiler_fqdns> --run-as root
 ```
 
 Note that if you are running `extend_ca_cert` locally on the primary Puppet server, you can avoid potential Bolt transport issues by specifying `--targets local://hostname`, e.g.
