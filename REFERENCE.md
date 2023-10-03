@@ -148,6 +148,8 @@ The following parameters are available in the `ca_extend::extend_ca_cert` plan:
 
 * [`targets`](#-ca_extend--extend_ca_cert--targets)
 * [`compilers`](#-ca_extend--extend_ca_cert--compilers)
+* [`replica`](#-ca_extend--extend_ca_cert--replica)
+* [`psql_nodes`](#-ca_extend--extend_ca_cert--psql_nodes)
 * [`ssldir`](#-ca_extend--extend_ca_cert--ssldir)
 * [`regen_primary_cert`](#-ca_extend--extend_ca_cert--regen_primary_cert)
 
@@ -161,7 +163,23 @@ The target node on which to run the plan.  Should be the primary Puppet server
 
 Data type: `Optional[TargetSpec]`
 
-Optional comma separated list of compilers to upload the certificate to
+Optional comma separated list of compilers to configure to use the extended CA
+
+Default value: `undef`
+
+##### <a name="-ca_extend--extend_ca_cert--replica"></a>`replica`
+
+Data type: `Optional[TargetSpec]`
+
+Optional replica to configure to use the extended CA
+
+Default value: `undef`
+
+##### <a name="-ca_extend--extend_ca_cert--psql_nodes"></a>`psql_nodes`
+
+Data type: `Optional[TargetSpec]`
+
+Optional comma separated list of psql nodes to configure to use the extended CA
 
 Default value: `undef`
 
